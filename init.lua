@@ -155,7 +155,7 @@ function Contexts:apply()
   if Contexts.current then
     -- Don't unapply current context if we're switching to it.
     -- Not sure this is right, but trying this.
-    if Context.current == self then
+    if Contexts.current == self then
       self.log.df("Changing to current context. Not unapplying.")
     else
       if not Contexts.current:unapply() then
