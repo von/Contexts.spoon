@@ -139,7 +139,17 @@ end
 -- {{{ apply() --
 --- Contexts:apply()
 --- Method
---- Apply given context.
+--- Apply given context:
+---
+--- 1) Calls unapply() on the previously applied context.
+---
+--- 2) Calls config.enterFunction() if present
+---
+--- 3) Starts any applications listed in config.layout if they are not running.
+---
+--- 4) Unminimizes any windows listed in config.layout if needed.
+---
+--- 5) Applies config.layout with hs.layout.apply()
 ---
 --- Parameters:
 --- * None
@@ -222,7 +232,12 @@ end
 -- unapply() {{{ --
 --- Contexts:unapply()
 --- Method
---- Unapply context.
+--- Unapply context:
+---
+--- 1) Calls config.exitFunction() if present.
+---
+--- 2) Saves context in Contet.previous for a subsequent call to Contexts.
+---
 ---
 --- Parameters:
 --- * None

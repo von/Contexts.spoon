@@ -12,3 +12,6 @@ the following additions:
 
  * Allows for an optional function to be called with a context is unapplied (typically
    when another context is applied.
+
+Note: There currently is a race condition in that applications in the layout that are
+started may not be running yet when subsequent steps are taken.
