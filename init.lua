@@ -245,10 +245,10 @@ function Contexts:unapply()
 end
 -- }}} unapply() --
 
--- previous() {{{ --
---- Contexts:previous()
+-- applyPrevious() {{{ --
+--- Contexts:applyPrevious()
 --- Method
---- Switch to previous context.
+--- Switch to previous context stored in Contexts.previous by unapply()
 ---
 --- Parameters:
 --- * None
@@ -256,7 +256,7 @@ end
 --- Returns:
 --- * true on success, false on error
 
-function Contexts:previous()
+function Contexts:applyPrevious()
   if Contexts.previous then
     Contexts.previous:apply()
   else
@@ -264,7 +264,7 @@ function Contexts:previous()
   end
 end
 
--- }}} previous() --
+-- }}} applyPrevious() --
 
 -- chooser() {{{ --
 --- Contexts:chooser()
