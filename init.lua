@@ -8,7 +8,7 @@ local Contexts = {}
 
 -- Metadata
 Contexts.name="Contexts"
-Contexts.version="0.1"
+Contexts.version="0.2"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
@@ -93,21 +93,17 @@ end
 ---
 ---
 --- Parameters:
----  * table - Table of action to key mappings
+---  * mapping - Table of action to key mappings
 ---
 --- Returns:
 ---  * Contexts object
 
-function Contexts:bindHotKeys(table)
-  for feature,mapping in pairs(table) do
-    if feature == "chooser" then
-      hs.hotkey.bind(mapping[1], mapping[2], function() self:chooser() end)
-    elseif feature == "previous" then
-      hs.hotkey.bind(mapping[1], mapping[2], function() self:previous() end)
-    else
-      self.log.wf("Unrecognized key binding feature '%s'", feature)
-    end
-  end
+function Contexts:bindHotKeys(mapping)
+  local spec = {
+    chooser = hs.fnutils.partial(self.chooser, self),
+    previous = hs.fnutils.partial(self.previous, self)
+  }
+  hs.spoons.bindHotkeysToSpec(spec, mapping)
   return self
 end
 -- }}} bindHotKeys() --
