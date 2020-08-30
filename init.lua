@@ -8,7 +8,7 @@ local Contexts = {}
 
 -- Metadata
 Contexts.name="Contexts"
-Contexts.version="0.2"
+Contexts.version="0.3"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
@@ -65,6 +65,9 @@ function Contexts:init()
   -- Set up logger for spoon
   self.log = hs.logger.new("Contexts")
 
+  -- Set up screen watcher
+  self.screenWatcher = hs.screen.watcher.new(hs.fnutils.partial(Contexts.screenWatcherCallback, self))
+
   -- Path to this file itself
   -- See also http://www.hammerspoon.org/docs/hs.spoons.html#resourcePath
   self.path = hs.spoons.scriptPath()
@@ -79,6 +82,50 @@ function Contexts:init()
   return self
 end
 -- }}} init() --
+
+--- Contexts:start()
+--- Method
+--- Start background activity.
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * Contexts object
+function Contexts:start()
+  self.screenWatcher:start()
+  return self
+end
+
+--- Contexts:stop()
+--- Method
+--- Stop background activity.
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * Contexts object
+function Contexts:stop()
+  self.screenWatcher:stop()
+  return self
+end
+
+-- Contexts:screenWatcherCallback()
+-- Internal function
+-- Callback for self.screenWatcher
+--
+-- Parameters:
+-- * None
+--
+-- Returns:
+-- * Nothing
+function Contexts:screenWatcherCallback()
+  if self.current then
+    self.log.d("Screen change detected. Re-applying context.")
+    self.current:apply()
+  end
+end
 
 -- bindHotKeys() {{{ --
 --- Contexts:bindHotKeys(table)
@@ -215,7 +262,7 @@ function Contexts:apply()
         end
       end)
 
-    self.log.df("Applying layout")
+    self.log.d("Applying layout")
     -- XXX There is a race condition in that apps we have launched above
     -- are unlikely to be running yet.
     hs.layout.apply(self.config.layout)
