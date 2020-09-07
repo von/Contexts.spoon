@@ -237,7 +237,7 @@ function Contexts:apply()
 
     -- Make sure all the applications in layout are running
     -- and all the windows are unminimized
-    hs.fnutils.map(self.config.layout,
+    hs.fnutils.each(self.config.layout,
       function(rule)
         local appName = rule[1]
         local app = hs.application.get(appName)
@@ -262,7 +262,7 @@ function Contexts:apply()
             end
           else  -- nil
             -- Unminimize all windows
-            hs.fnutils.map(app:allWindows(), winFunc)
+            hs.fnutils.each(app:allWindows(), winFunc)
           end
         end
       end)
