@@ -166,6 +166,8 @@ end
 ---   * layout (table) [Optional]: A table suitable for use with hs.layout.apply
 ---   * enterFunction (function) [Optional]: A function called when context is applied
 ---   * exitFunction (function) [Optional]: A function called when context is exited
+---   * focused (dictionary) [Optional]: Window to focus on. First element is application,
+---     second optional element is window name.
 ---
 --- Returns:
 --- * Contexts instance
@@ -193,6 +195,8 @@ end
 --- 4) Unminimizes and raises any windows listed in config.layout if needed.
 ---
 --- 5) Applies config.layout with hs.layout.apply()
+---
+--- 6) Focuses the window given in config.focused
 ---
 --- Parameters:
 --- * None
@@ -267,6 +271,17 @@ function Contexts:apply()
     -- XXX There is a race condition in that apps we have launched above
     -- are unlikely to be running yet.
     hs.layout.apply(self.config.layout)
+  end
+
+  if self.config.focused then
+    local appName = self.config.focused[1]
+    local winName = self.config.focused[2]
+    self.log.df("Focusing: AppName %s WindowName %s", appName, winName)
+    local app = hs.application.get(appName)
+    local win = winName and app:getWindow(winName) or app:mainWindow()
+    if win then
+      win:focus()
+    end
   end
 
   return true
