@@ -190,7 +190,7 @@ end
 ---
 --- 3) Starts any applications listed in config.layout if they are not running.
 ---
---- 4) Unminimizes any windows listed in config.layout if needed.
+--- 4) Unminimizes and raises any windows listed in config.layout if needed.
 ---
 --- 5) Applies config.layout with hs.layout.apply()
 ---
@@ -245,19 +245,20 @@ function Contexts:apply()
           end
         else
           local winName = rule[2]
+          local winFunc = function(w) self.log.df("Raising %s", w:title()) w:unminimize() w:raise() end
           if type(winName) == "string" then
             local win = app:findWindow(winName)
             if win then
-              win:unminimize()
+              winFunc(win)
             end
           elseif type(winName) == "function" then
             local win = winName()
             if win then
-              win:unminimize()
+              winFunc(win)
             end
           else  -- nil
             -- Unminimize all windows
-            hs.fnutils.map(app:allWindows(), function(w) w:unminimize() end)
+            hs.fnutils.map(app:allWindows(), winFunc)
           end
         end
       end)
