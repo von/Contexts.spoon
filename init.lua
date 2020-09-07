@@ -8,7 +8,7 @@ local Contexts = {}
 
 -- Metadata
 Contexts.name="Contexts"
-Contexts.version="0.3"
+Contexts.version="0.4"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"

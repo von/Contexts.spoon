@@ -8,20 +8,22 @@
     ],
     "Function" : [
       {
-        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n\nReturns:\n* Contexts instance",
+        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n\nReturns:\n* Contexts instance",
         "stripped_doc" : [
           "Create a new Contexts instance",
           ""
         ],
+        "def" : "Contexts.new()",
         "parameters" : [
           "* config: A table containing the following keys:",
           "  * title (string) [Required]: Title of context for display to user",
           "  * layout (table) [Optional]: A table suitable for use with hs.layout.apply",
           "  * enterFunction (function) [Optional]: A function called when context is applied",
           "  * exitFunction (function) [Optional]: A function called when context is exited",
+          "  * focused (dictionary) [Optional]: Window to focus on. First element is application,",
+          "    second optional element is window name.",
           ""
         ],
-        "desc" : "Create a new Contexts instance",
         "notes" : [
 
         ],
@@ -30,7 +32,7 @@
         "returns" : [
           "* Contexts instance"
         ],
-        "def" : "Contexts.new()",
+        "desc" : "Create a new Contexts instance",
         "name" : "new"
       }
     ],
@@ -40,10 +42,10 @@
     "stripped_doc" : [
 
     ],
+    "desc" : "A context is a set of windows around hs.layout and other",
     "Deprecated" : [
 
     ],
-    "desc" : "A context is a set of windows around hs.layout and other",
     "type" : "Module",
     "Constructor" : [
 
@@ -56,11 +58,11 @@
           "Enable or disable debugging",
           ""
         ],
+        "def" : "Contexts:debug(enable)",
         "parameters" : [
           " * enable - Boolean indicating whether debugging should be on",
           ""
         ],
-        "desc" : "Enable or disable debugging",
         "notes" : [
 
         ],
@@ -69,7 +71,7 @@
         "returns" : [
           " * Nothing"
         ],
-        "def" : "Contexts:debug(enable)",
+        "desc" : "Enable or disable debugging",
         "name" : "debug"
       },
       {
@@ -83,11 +85,11 @@
           "with methods to be used later, then return the object.",
           ""
         ],
+        "def" : "Contexts:init()",
         "parameters" : [
           " * None",
           ""
         ],
-        "desc" : "Initializes a Contexts",
         "notes" : [
 
         ],
@@ -96,7 +98,7 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:init()",
+        "desc" : "Initializes a Contexts",
         "name" : "init"
       },
       {
@@ -105,11 +107,11 @@
           "Start background activity.",
           ""
         ],
+        "def" : "Contexts:start()",
         "parameters" : [
           " * None",
           ""
         ],
-        "desc" : "Start background activity.",
         "notes" : [
 
         ],
@@ -118,7 +120,7 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:start()",
+        "desc" : "Start background activity.",
         "name" : "start"
       },
       {
@@ -127,11 +129,11 @@
           "Stop background activity.",
           ""
         ],
+        "def" : "Contexts:stop()",
         "parameters" : [
           " * None",
           ""
         ],
-        "desc" : "Stop background activity.",
         "notes" : [
 
         ],
@@ -140,7 +142,7 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:stop()",
+        "desc" : "Stop background activity.",
         "name" : "stop"
       },
       {
@@ -156,11 +158,11 @@
           "",
           ""
         ],
+        "def" : "Contexts:bindHotKeys(table)",
         "parameters" : [
           " * mapping - Table of action to key mappings",
           ""
         ],
-        "desc" : "The method accepts a single parameter, which is a table. The keys of the table",
         "notes" : [
 
         ],
@@ -169,11 +171,11 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:bindHotKeys(table)",
+        "desc" : "The method accepts a single parameter, which is a table. The keys of the table",
         "name" : "bindHotKeys"
       },
       {
-        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
+        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Focuses the window given in config.focused\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
         "stripped_doc" : [
           "Apply given context:",
           "",
@@ -183,16 +185,18 @@
           "",
           "3) Starts any applications listed in config.layout if they are not running.",
           "",
-          "4) Unminimizes any windows listed in config.layout if needed.",
+          "4) Unminimizes and raises any windows listed in config.layout if needed.",
           "",
           "5) Applies config.layout with hs.layout.apply()",
+          "",
+          "6) Focuses the window given in config.focused",
           ""
         ],
+        "def" : "Contexts:apply()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Apply given context:",
         "notes" : [
 
         ],
@@ -201,7 +205,7 @@
         "returns" : [
           "* true on success, false on failure"
         ],
-        "def" : "Contexts:apply()",
+        "desc" : "Apply given context:",
         "name" : "apply"
       },
       {
@@ -215,11 +219,11 @@
           "",
           ""
         ],
+        "def" : "Contexts:unapply()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Unapply context:",
         "notes" : [
 
         ],
@@ -228,7 +232,7 @@
         "returns" : [
           "* true on success, false on error"
         ],
-        "def" : "Contexts:unapply()",
+        "desc" : "Unapply context:",
         "name" : "unapply"
       },
       {
@@ -237,11 +241,11 @@
           "Switch to previous context stored in Contexts.previous by unapply()",
           ""
         ],
+        "def" : "Contexts:applyPrevious()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Switch to previous context stored in Contexts.previous by unapply()",
         "notes" : [
 
         ],
@@ -250,7 +254,7 @@
         "returns" : [
           "* true on success, false on error"
         ],
-        "def" : "Contexts:applyPrevious()",
+        "desc" : "Switch to previous context stored in Contexts.previous by unapply()",
         "name" : "applyPrevious"
       },
       {
@@ -259,11 +263,11 @@
           "Display a hs.chooser with all contexts and apply selected.",
           ""
         ],
+        "def" : "Contexts:chooser()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Display a hs.chooser with all contexts and apply selected.",
         "notes" : [
 
         ],
@@ -272,26 +276,34 @@
         "returns" : [
           "* Nothing"
         ],
-        "def" : "Contexts:chooser()",
+        "desc" : "Display a hs.chooser with all contexts and apply selected.",
         "name" : "chooser"
       }
     ],
+    "Command" : [
+
+    ],
+    "Field" : [
+
+    ],
     "items" : [
       {
-        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n\nReturns:\n* Contexts instance",
+        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n\nReturns:\n* Contexts instance",
         "stripped_doc" : [
           "Create a new Contexts instance",
           ""
         ],
+        "def" : "Contexts.new()",
         "parameters" : [
           "* config: A table containing the following keys:",
           "  * title (string) [Required]: Title of context for display to user",
           "  * layout (table) [Optional]: A table suitable for use with hs.layout.apply",
           "  * enterFunction (function) [Optional]: A function called when context is applied",
           "  * exitFunction (function) [Optional]: A function called when context is exited",
+          "  * focused (dictionary) [Optional]: Window to focus on. First element is application,",
+          "    second optional element is window name.",
           ""
         ],
-        "desc" : "Create a new Contexts instance",
         "notes" : [
 
         ],
@@ -300,11 +312,11 @@
         "returns" : [
           "* Contexts instance"
         ],
-        "def" : "Contexts.new()",
+        "desc" : "Create a new Contexts instance",
         "name" : "new"
       },
       {
-        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
+        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Focuses the window given in config.focused\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
         "stripped_doc" : [
           "Apply given context:",
           "",
@@ -314,16 +326,18 @@
           "",
           "3) Starts any applications listed in config.layout if they are not running.",
           "",
-          "4) Unminimizes any windows listed in config.layout if needed.",
+          "4) Unminimizes and raises any windows listed in config.layout if needed.",
           "",
           "5) Applies config.layout with hs.layout.apply()",
+          "",
+          "6) Focuses the window given in config.focused",
           ""
         ],
+        "def" : "Contexts:apply()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Apply given context:",
         "notes" : [
 
         ],
@@ -332,7 +346,7 @@
         "returns" : [
           "* true on success, false on failure"
         ],
-        "def" : "Contexts:apply()",
+        "desc" : "Apply given context:",
         "name" : "apply"
       },
       {
@@ -341,11 +355,11 @@
           "Switch to previous context stored in Contexts.previous by unapply()",
           ""
         ],
+        "def" : "Contexts:applyPrevious()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Switch to previous context stored in Contexts.previous by unapply()",
         "notes" : [
 
         ],
@@ -354,7 +368,7 @@
         "returns" : [
           "* true on success, false on error"
         ],
-        "def" : "Contexts:applyPrevious()",
+        "desc" : "Switch to previous context stored in Contexts.previous by unapply()",
         "name" : "applyPrevious"
       },
       {
@@ -370,11 +384,11 @@
           "",
           ""
         ],
+        "def" : "Contexts:bindHotKeys(table)",
         "parameters" : [
           " * mapping - Table of action to key mappings",
           ""
         ],
-        "desc" : "The method accepts a single parameter, which is a table. The keys of the table",
         "notes" : [
 
         ],
@@ -383,7 +397,7 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:bindHotKeys(table)",
+        "desc" : "The method accepts a single parameter, which is a table. The keys of the table",
         "name" : "bindHotKeys"
       },
       {
@@ -392,11 +406,11 @@
           "Display a hs.chooser with all contexts and apply selected.",
           ""
         ],
+        "def" : "Contexts:chooser()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Display a hs.chooser with all contexts and apply selected.",
         "notes" : [
 
         ],
@@ -405,7 +419,7 @@
         "returns" : [
           "* Nothing"
         ],
-        "def" : "Contexts:chooser()",
+        "desc" : "Display a hs.chooser with all contexts and apply selected.",
         "name" : "chooser"
       },
       {
@@ -414,11 +428,11 @@
           "Enable or disable debugging",
           ""
         ],
+        "def" : "Contexts:debug(enable)",
         "parameters" : [
           " * enable - Boolean indicating whether debugging should be on",
           ""
         ],
-        "desc" : "Enable or disable debugging",
         "notes" : [
 
         ],
@@ -427,7 +441,7 @@
         "returns" : [
           " * Nothing"
         ],
-        "def" : "Contexts:debug(enable)",
+        "desc" : "Enable or disable debugging",
         "name" : "debug"
       },
       {
@@ -441,11 +455,11 @@
           "with methods to be used later, then return the object.",
           ""
         ],
+        "def" : "Contexts:init()",
         "parameters" : [
           " * None",
           ""
         ],
-        "desc" : "Initializes a Contexts",
         "notes" : [
 
         ],
@@ -454,7 +468,7 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:init()",
+        "desc" : "Initializes a Contexts",
         "name" : "init"
       },
       {
@@ -463,11 +477,11 @@
           "Start background activity.",
           ""
         ],
+        "def" : "Contexts:start()",
         "parameters" : [
           " * None",
           ""
         ],
-        "desc" : "Start background activity.",
         "notes" : [
 
         ],
@@ -476,7 +490,7 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:start()",
+        "desc" : "Start background activity.",
         "name" : "start"
       },
       {
@@ -485,11 +499,11 @@
           "Stop background activity.",
           ""
         ],
+        "def" : "Contexts:stop()",
         "parameters" : [
           " * None",
           ""
         ],
-        "desc" : "Stop background activity.",
         "notes" : [
 
         ],
@@ -498,7 +512,7 @@
         "returns" : [
           " * Contexts object"
         ],
-        "def" : "Contexts:stop()",
+        "desc" : "Stop background activity.",
         "name" : "stop"
       },
       {
@@ -512,11 +526,11 @@
           "",
           ""
         ],
+        "def" : "Contexts:unapply()",
         "parameters" : [
           "* None",
           ""
         ],
-        "desc" : "Unapply context:",
         "notes" : [
 
         ],
@@ -525,15 +539,9 @@
         "returns" : [
           "* true on success, false on error"
         ],
-        "def" : "Contexts:unapply()",
+        "desc" : "Unapply context:",
         "name" : "unapply"
       }
-    ],
-    "Command" : [
-
-    ],
-    "Field" : [
-
     ],
     "name" : "Contexts"
   }
