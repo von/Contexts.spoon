@@ -8,7 +8,7 @@ local Contexts = {}
 
 -- Metadata
 Contexts.name="Contexts"
-Contexts.version="0.4"
+Contexts.version="0.5"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
@@ -168,6 +168,10 @@ end
 ---   * exitFunction (function) [Optional]: A function called when context is exited
 ---   * focused (dictionary) [Optional]: Window to focus on. First element is application,
 ---     second optional element is window name.
+---   * defaultInputDevice (table) [Optional]: List of strings identifying input audio
+---     devices.  First input device found, will be set to the default.
+---   * defaultOutputDevice (table) [Optional]: List of strings identifying output
+---     audio devices. First output device found, will be set to the default.
 ---
 --- Returns:
 --- * Contexts instance
@@ -197,6 +201,10 @@ end
 --- 5) Applies config.layout with hs.layout.apply()
 ---
 --- 6) Focuses the window given in config.focused
+---
+--- 7) Sets the default input device found in defaultInputDevice
+---
+--- 8) Sets the default output device found in defaultOutputDevice
 ---
 --- Parameters:
 --- * None
@@ -281,6 +289,26 @@ function Contexts:apply()
     local win = winName and app:getWindow(winName) or app:mainWindow()
     if win then
       win:focus()
+    end
+  end
+
+  if self.config.defaultInputDevice then
+    for i,device in pairs(self.config.defaultInputDevice) do
+      local dev = hs.audiodevice.findInputByName(device)
+      if dev and dev:setDefaultInputDevice() then
+        self.log.df("Default input device set: %s", device)
+        break
+      end
+    end
+  end
+
+  if self.config.defaultOutputDevice then
+    for i,device in pairs(self.config.defaultOutputDevice) do
+      local dev = hs.audiodevice.findOutputByName(device)
+      if dev and dev:setDefaultOutputDevice() then
+        self.log.df("Default output device set: %s", device)
+        break
+      end
     end
   end
 
