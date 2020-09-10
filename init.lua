@@ -8,7 +8,7 @@ local Contexts = {}
 
 -- Metadata
 Contexts.name="Contexts"
-Contexts.version="0.5"
+Contexts.version="0.6"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
@@ -192,6 +192,8 @@ end
 ---
 --- 1) Calls unapply() on the previously applied context.
 ---
+--- Following is handled by _apply():
+---
 --- 2) Calls config.enterFunction() if present
 ---
 --- 3) Starts any applications listed in config.layout if they are not running.
@@ -229,6 +231,29 @@ function Contexts:apply()
     end
   end
   Contexts.current = self
+
+  return self:_apply()
+end
+-- }}} apply() --
+
+-- _apply() {{{ --
+-- Context:_apply()
+-- Internal Function
+-- Handle the work of applying given Context. See apply() for details.
+-- Can be called recursively to handle inherited Contexts. One-time
+-- activities should be handled by apply()
+--
+-- Parameters:
+-- * None
+--
+-- Returns:
+-- * true on success, false on failure
+function Contexts:_apply()
+
+  if self.config.inherits then
+    self.log.df("Applying inherited context...")
+    self.config.inherits:_apply()
+  end
 
   local title = self.config.title
   self.log.df("Applying context %s", title)
@@ -314,7 +339,7 @@ function Contexts:apply()
 
   return true
 end
--- }}} apply() --
+-- }}} _apply() --
 
 -- unapply() {{{ --
 --- Contexts:unapply()
@@ -332,6 +357,25 @@ end
 --- Returns:
 --- * true on success, false on error
 function Contexts:unapply()
+  local status = self:_unapply()
+  Contexts.previous = self
+  Contexts.current = nil
+  return status
+end
+-- }}} unapply() --
+
+-- _unapply() {{{ --
+-- Contexts:_unapply()
+-- Internal Function
+-- Handle the work of unapplying the given context. Can be called recursively
+-- to handle inheritance.
+--
+-- Parameters:
+-- * None
+--
+-- Returns:
+-- * true on success, false on error
+function Contexts:_unapply()
   if self.config.exitFunction then
     local ok, err = pcall(self.config.exitFunction)
     if not ok then
@@ -340,12 +384,13 @@ function Contexts:unapply()
     end
   end
 
-  Contexts.previous = self
-  Contexts.current = nil
-
+  if self.config.inherits then
+    return self.config.inherits:_unapply()
+  end
   return true
 end
--- }}} unapply() --
+-- }}} _unapply() --
+
 
 -- applyPrevious() {{{ --
 --- Contexts:applyPrevious()
