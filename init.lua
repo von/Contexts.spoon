@@ -163,6 +163,7 @@ end
 --- Parameters:
 --- * config: A table containing the following keys:
 ---   * title (string) [Required]: Title of context for display to user
+---   * image (hs.image) [Optional]: chooser() will use this image
 ---   * layout (table) [Optional]: A table suitable for use with hs.layout.apply
 ---   * enterFunction (function) [Optional]: A function called when context is applied
 ---   * exitFunction (function) [Optional]: A function called when context is exited
@@ -417,6 +418,8 @@ end
 --- Contexts:chooser()
 --- Method
 --- Display a hs.chooser with all contexts and apply selected.
+--- If the Context has an 'image' attribute, it will be used next
+--- to the title
 ---
 --- Parameters:
 --- * None
