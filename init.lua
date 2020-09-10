@@ -428,7 +428,12 @@ function Contexts:chooser()
   -- in choices
   local choices = hs.fnutils.map(
     Contexts.contexts,
-    function(c) return { text = c.config.title } end)
+    function(c)
+      return {
+        text = c.config.title,
+        image = c.config.image
+      }
+    end)
   table.sort(choices, function(a,b) return a.text:lower() < b.text:lower() end)
 
   local function callback(choice)
