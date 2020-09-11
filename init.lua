@@ -462,5 +462,30 @@ function Contexts:chooser()
 end
 -- }}} chooser() --
 
+-- sealUserActions {{{ --
+--- Contexts.sealUserActions()
+--- Function
+--- Return a table suitable for Seal.plugins.useractions.actions
+--- See http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html
+---
+--- Parameters:
+--- * None
+---
+--- Returns:
+--- * Table of Seal user actions
+function Contexts:sealUserActions()
+  local actions = {}
+  hs.fnutils.each(
+    Contexts.contexts,
+    function(c)
+      actions[c.config.title] = {
+        fn = hs.fnutils.partial(Contexts.apply, c),
+        icon = c.config.image
+      }
+    end)
+  return actions
+end
+-- }}} sealUserActions --
+
 return Contexts
 -- vim:foldmethod=marker:
