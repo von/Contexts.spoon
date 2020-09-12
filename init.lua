@@ -180,6 +180,8 @@ function Contexts.new(config)
   Contexts.log.df("new context %s created", config.title)
   local self = setmetatable({}, Contexts)
   self.config = config
+  -- hs.window.filsters that will be created on first application
+  self.wfilters = nil
   -- TODO: Add a delete() method that removes from contexts
   table.insert(Contexts.contexts, self)
   return self
@@ -203,11 +205,15 @@ end
 ---
 --- 5) Applies config.layout with hs.layout.apply()
 ---
---- 6) Focuses the window given in config.focused
+--- 6) Creates a set of hs.window.filters subscriptions for each application/window
+---    in the given layout and applies the relevant portion of the layout
+---    when relevant new windows are created.
 ---
---- 7) Sets the default input device found in defaultInputDevice
+--- 7) Focuses the window given in config.focused
 ---
---- 8) Sets the default output device found in defaultOutputDevice
+--- 8) Sets the default input device found in defaultInputDevice
+---
+--- 9) Sets the default output device found in defaultOutputDevice
 ---
 --- Parameters:
 --- * None
@@ -301,6 +307,31 @@ function Contexts:_apply()
         end
       end)
 
+    -- First time called, create hs.window.filters
+    if not self.wfilters then
+      self.log.d("Creating window filters...")
+      self.wfilters = {}
+      hs.fnutils.each(self.config.layout,
+        function(rule)
+          local appName = rule[1]
+          local winName = rule[2]
+          self.log.df("Creating window.filter for %s %s", appName, winName)
+          local filter = hs.window.filter.new(false)
+          filter:setAppFilter("zoom.us", {allowTitles="Zoom Meeting"})
+          table.insert(self.wfilters, {filter, rule})
+        end)
+    end
+
+    self.log.d("Subscribing to window filters...")
+    hs.fnutils.each(self.wfilters,
+      function(f)
+        f[1]:subscribe(hs.window.filter.windowCreated,
+          function(win, appName, event)
+            self.log.df(appName .. " created")
+            hs.layout.apply({f[2]})
+          end)
+      end)
+
     self.log.d("Applying layout")
     -- XXX There is a race condition in that apps we have launched above
     -- are unlikely to be running yet.
@@ -377,6 +408,10 @@ end
 -- Returns:
 -- * true on success, false on error
 function Contexts:_unapply()
+  if self.wfilters then
+    hs.fnutils.each(self.wfilters, function(f) f[1]:unsubscribeAll() end)
+  end
+
   if self.config.exitFunction then
     local ok, err = pcall(self.config.exitFunction)
     if not ok then
