@@ -450,8 +450,8 @@ end
 -- }}} applyPrevious() --
 
 -- chooser() {{{ --
---- Contexts:chooser()
---- Method
+--- Contexts.chooser()
+--- Function
 --- Display a hs.chooser with all contexts and apply selected.
 --- If the Context has an 'image' attribute, it will be used next
 --- to the title
@@ -461,7 +461,7 @@ end
 ---
 --- Returns:
 --- * Nothing
-function Contexts:chooser()
+function Contexts.chooser()
   -- Contexts instances don't convert into NSObjects so we can't include them
   -- in choices
   local choices = hs.fnutils.map(
@@ -476,23 +476,23 @@ function Contexts:chooser()
 
   local function callback(choice)
     if choice then
-      self.log.df("Context %s chosen", choice.text)
+      Contexts.log.df("Context %s chosen", choice.text)
       local context = hs.fnutils.find(
         Contexts.contexts,
         function(c) return c.config.title == choice.text end)
       if not context then
-        self.log.ef("Could not find chosen context %s", choice.text)
+        Contexts.log.ef("Could not find chosen context %s", choice.text)
         return
       end
       context:apply()
     else
-      self.log.d("Choice is nil")
+      Contexts.log.d("Choice is nil")
     end
   end
 
   local chooser = hs.chooser.new(callback)
   chooser:choices(choices)
-  self.log.d("Launching chooser")
+  Contexts.log.d("Launching chooser")
   chooser:show()
 end
 -- }}} chooser() --
@@ -508,7 +508,7 @@ end
 ---
 --- Returns:
 --- * Table of Seal user actions
-function Contexts:sealUserActions()
+function Contexts.sealUserActions()
   local actions = {}
   hs.fnutils.each(
     Contexts.contexts,
