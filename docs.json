@@ -8,22 +8,12 @@
     ],
     "Function" : [
       {
-        "name" : "new",
+        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
         "stripped_doc" : [
           "Create a new Contexts instance",
           ""
         ],
         "desc" : "Create a new Contexts instance",
-        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
-        "notes" : [
-
-        ],
-        "signature" : "Contexts.new()",
-        "type" : "Function",
-        "returns" : [
-          "* Contexts instance"
-        ],
-        "def" : "Contexts.new()",
         "parameters" : [
           "* config: A table containing the following keys:",
           "  * title (string) [Required]: Title of context for display to user",
@@ -38,17 +28,54 @@
           "  * defaultOutputDevice (table) [Optional]: List of strings identifying output",
           "    audio devices. First output device found, will be set to the default.",
           ""
-        ]
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Contexts.new()",
+        "type" : "Function",
+        "returns" : [
+          "* Contexts instance"
+        ],
+        "def" : "Contexts.new()",
+        "name" : "new"
       },
       {
-        "name" : "sealUserActions",
+        "doc" : "Display a hs.chooser with all contexts and apply selected.\nIf the Context has an 'image' attribute, it will be used next\nto the title\n\nParameters:\n* None\n\nReturns:\n* Nothing",
+        "stripped_doc" : [
+          "Display a hs.chooser with all contexts and apply selected.",
+          "If the Context has an 'image' attribute, it will be used next",
+          "to the title",
+          ""
+        ],
+        "desc" : "Display a hs.chooser with all contexts and apply selected.",
+        "parameters" : [
+          "* None",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Contexts.chooser()",
+        "type" : "Function",
+        "returns" : [
+          "* Nothing"
+        ],
+        "def" : "Contexts.chooser()",
+        "name" : "chooser"
+      },
+      {
+        "doc" : "Return a table suitable for Seal.plugins.useractions.actions\nSee http:\/\/www.hammerspoon.org\/Spoons\/Seal.plugins.useractions.html\n\nParameters:\n* None\n\nReturns:\n* Table of Seal user actions",
         "stripped_doc" : [
           "Return a table suitable for Seal.plugins.useractions.actions",
           "See http:\/\/www.hammerspoon.org\/Spoons\/Seal.plugins.useractions.html",
           ""
         ],
         "desc" : "Return a table suitable for Seal.plugins.useractions.actions",
-        "doc" : "Return a table suitable for Seal.plugins.useractions.actions\nSee http:\/\/www.hammerspoon.org\/Spoons\/Seal.plugins.useractions.html\n\nParameters:\n* None\n\nReturns:\n* Table of Seal user actions",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -58,10 +85,7 @@
           "* Table of Seal user actions"
         ],
         "def" : "Contexts.sealUserActions()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
+        "name" : "sealUserActions"
       }
     ],
     "Variable" : [
@@ -70,24 +94,27 @@
     "stripped_doc" : [
 
     ],
-    "desc" : "A context is a set of windows around hs.layout and other",
-    "type" : "Module",
+    "desc" : "A context is based on a hs.layout configuration of",
     "Deprecated" : [
 
     ],
+    "type" : "Module",
     "Constructor" : [
 
     ],
-    "doc" : "Allow defining contexts and switching between them.\nA context is a set of windows around hs.layout and other\nstate.",
+    "doc" : "Allow defining contexts and switching between them.\nA context is based on a hs.layout configuration of\na set of applications and windows and their layout\nand adds the following:\n* Automatically launches applications that are not running in the layout.\n* Automatically unminimizes windows in the layout.\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Creates a set of hs.window.filter subscriptions for windows in the\n  layout and applies the relevant portion of the layout for any relevant\n  new windows that are created.\n* Allows setting the default input and output audio device.\n\nAdditionally, to allow for interactive selection of Contextsr:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.",
     "Method" : [
       {
-        "name" : "debug",
+        "doc" : "Enable or disable debugging\n\nParameters:\n * enable - Boolean indicating whether debugging should be on\n\nReturns:\n * Nothing",
         "stripped_doc" : [
           "Enable or disable debugging",
           ""
         ],
         "desc" : "Enable or disable debugging",
-        "doc" : "Enable or disable debugging\n\nParameters:\n * enable - Boolean indicating whether debugging should be on\n\nReturns:\n * Nothing",
+        "parameters" : [
+          " * enable - Boolean indicating whether debugging should be on",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -97,13 +124,10 @@
           " * Nothing"
         ],
         "def" : "Contexts:debug(enable)",
-        "parameters" : [
-          " * enable - Boolean indicating whether debugging should be on",
-          ""
-        ]
+        "name" : "debug"
       },
       {
-        "name" : "init",
+        "doc" : "Initializes a Contexts\nWhen a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua\nfrom the relevant s.\nDo generally not perform any work, map any hotkeys, start any timers\/watchers\/etc.\nin the main scope of your init.lua. Instead, it should simply prepare an object\nwith methods to be used later, then return the object.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "Initializes a Contexts",
           "When a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua",
@@ -114,7 +138,10 @@
           ""
         ],
         "desc" : "Initializes a Contexts",
-        "doc" : "Initializes a Contexts\nWhen a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua\nfrom the relevant s.\nDo generally not perform any work, map any hotkeys, start any timers\/watchers\/etc.\nin the main scope of your init.lua. Instead, it should simply prepare an object\nwith methods to be used later, then return the object.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -124,19 +151,19 @@
           " * Contexts object"
         ],
         "def" : "Contexts:init()",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "name" : "init"
       },
       {
-        "name" : "start",
+        "doc" : "Start background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "Start background activity.",
           ""
         ],
         "desc" : "Start background activity.",
-        "doc" : "Start background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -146,19 +173,19 @@
           " * Contexts object"
         ],
         "def" : "Contexts:start()",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "name" : "start"
       },
       {
-        "name" : "stop",
+        "doc" : "Stop background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "Stop background activity.",
           ""
         ],
         "desc" : "Stop background activity.",
-        "doc" : "Stop background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -168,13 +195,10 @@
           " * Contexts object"
         ],
         "def" : "Contexts:stop()",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "name" : "stop"
       },
       {
-        "name" : "bindHotKeys",
+        "doc" : "The method accepts a single parameter, which is a table. The keys of the table\nare strings that describe the action performed, and the values of the table are\ntables containing modifiers and keynames\/keycodes. E.g.\n  {\n    chooser = {{\"cmd\", \"alt\"}, \"c\"},\n    previous = {{\"cmd\", \"alt\"}, \"p\"}\n   }\n\n\nParameters:\n * mapping - Table of action to key mappings\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "The method accepts a single parameter, which is a table. The keys of the table",
           "are strings that describe the action performed, and the values of the table are",
@@ -187,7 +211,10 @@
           ""
         ],
         "desc" : "The method accepts a single parameter, which is a table. The keys of the table",
-        "doc" : "The method accepts a single parameter, which is a table. The keys of the table\nare strings that describe the action performed, and the values of the table are\ntables containing modifiers and keynames\/keycodes. E.g.\n  {\n    chooser = {{\"cmd\", \"alt\"}, \"c\"},\n    previous = {{\"cmd\", \"alt\"}, \"p\"}\n   }\n\n\nParameters:\n * mapping - Table of action to key mappings\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * mapping - Table of action to key mappings",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -197,13 +224,10 @@
           " * Contexts object"
         ],
         "def" : "Contexts:bindHotKeys(table)",
-        "parameters" : [
-          " * mapping - Table of action to key mappings",
-          ""
-        ]
+        "name" : "bindHotKeys"
       },
       {
-        "name" : "apply",
+        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application\/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created.\n\n7) Focuses the window given in config.focused\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
         "stripped_doc" : [
           "Apply given context:",
           "",
@@ -219,15 +243,22 @@
           "",
           "5) Applies config.layout with hs.layout.apply()",
           "",
-          "6) Focuses the window given in config.focused",
+          "6) Creates a set of hs.window.filters subscriptions for each application\/window",
+          "   in the given layout and applies the relevant portion of the layout",
+          "   when relevant new windows are created.",
           "",
-          "7) Sets the default input device found in defaultInputDevice",
+          "7) Focuses the window given in config.focused",
           "",
-          "8) Sets the default output device found in defaultOutputDevice",
+          "8) Sets the default input device found in defaultInputDevice",
+          "",
+          "9) Sets the default output device found in defaultOutputDevice",
           ""
         ],
         "desc" : "Apply given context:",
-        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Focuses the window given in config.focused\n\n7) Sets the default input device found in defaultInputDevice\n\n8) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -237,13 +268,10 @@
           "* true on success, false on failure"
         ],
         "def" : "Contexts:apply()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
+        "name" : "apply"
       },
       {
-        "name" : "unapply",
+        "doc" : "Unapply context:\n\n1) Calls config.exitFunction() if present.\n\n2) Saves context in Contet.previous for a subsequent call to Contexts.\n\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
         "stripped_doc" : [
           "Unapply context:",
           "",
@@ -254,7 +282,10 @@
           ""
         ],
         "desc" : "Unapply context:",
-        "doc" : "Unapply context:\n\n1) Calls config.exitFunction() if present.\n\n2) Saves context in Contet.previous for a subsequent call to Contexts.\n\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -264,19 +295,19 @@
           "* true on success, false on error"
         ],
         "def" : "Contexts:unapply()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
+        "name" : "unapply"
       },
       {
-        "name" : "applyPrevious",
+        "doc" : "Switch to previous context stored in Contexts.previous by unapply()\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
         "stripped_doc" : [
           "Switch to previous context stored in Contexts.previous by unapply()",
           ""
         ],
         "desc" : "Switch to previous context stored in Contexts.previous by unapply()",
-        "doc" : "Switch to previous context stored in Contexts.previous by unapply()\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -286,13 +317,15 @@
           "* true on success, false on error"
         ],
         "def" : "Contexts:applyPrevious()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
-      },
+        "name" : "applyPrevious"
+      }
+    ],
+    "Field" : [
+
+    ],
+    "items" : [
       {
-        "name" : "chooser",
+        "doc" : "Display a hs.chooser with all contexts and apply selected.\nIf the Context has an 'image' attribute, it will be used next\nto the title\n\nParameters:\n* None\n\nReturns:\n* Nothing",
         "stripped_doc" : [
           "Display a hs.chooser with all contexts and apply selected.",
           "If the Context has an 'image' attribute, it will be used next",
@@ -300,40 +333,28 @@
           ""
         ],
         "desc" : "Display a hs.chooser with all contexts and apply selected.",
-        "doc" : "Display a hs.chooser with all contexts and apply selected.\nIf the Context has an 'image' attribute, it will be used next\nto the title\n\nParameters:\n* None\n\nReturns:\n* Nothing",
-        "notes" : [
-
-        ],
-        "signature" : "Contexts:chooser()",
-        "type" : "Method",
-        "returns" : [
-          "* Nothing"
-        ],
-        "def" : "Contexts:chooser()",
         "parameters" : [
           "* None",
           ""
-        ]
-      }
-    ],
-    "items" : [
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Contexts.chooser()",
+        "type" : "Function",
+        "returns" : [
+          "* Nothing"
+        ],
+        "def" : "Contexts.chooser()",
+        "name" : "chooser"
+      },
       {
-        "name" : "new",
+        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
         "stripped_doc" : [
           "Create a new Contexts instance",
           ""
         ],
         "desc" : "Create a new Contexts instance",
-        "doc" : "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
-        "notes" : [
-
-        ],
-        "signature" : "Contexts.new()",
-        "type" : "Function",
-        "returns" : [
-          "* Contexts instance"
-        ],
-        "def" : "Contexts.new()",
         "parameters" : [
           "* config: A table containing the following keys:",
           "  * title (string) [Required]: Title of context for display to user",
@@ -348,17 +369,30 @@
           "  * defaultOutputDevice (table) [Optional]: List of strings identifying output",
           "    audio devices. First output device found, will be set to the default.",
           ""
-        ]
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Contexts.new()",
+        "type" : "Function",
+        "returns" : [
+          "* Contexts instance"
+        ],
+        "def" : "Contexts.new()",
+        "name" : "new"
       },
       {
-        "name" : "sealUserActions",
+        "doc" : "Return a table suitable for Seal.plugins.useractions.actions\nSee http:\/\/www.hammerspoon.org\/Spoons\/Seal.plugins.useractions.html\n\nParameters:\n* None\n\nReturns:\n* Table of Seal user actions",
         "stripped_doc" : [
           "Return a table suitable for Seal.plugins.useractions.actions",
           "See http:\/\/www.hammerspoon.org\/Spoons\/Seal.plugins.useractions.html",
           ""
         ],
         "desc" : "Return a table suitable for Seal.plugins.useractions.actions",
-        "doc" : "Return a table suitable for Seal.plugins.useractions.actions\nSee http:\/\/www.hammerspoon.org\/Spoons\/Seal.plugins.useractions.html\n\nParameters:\n* None\n\nReturns:\n* Table of Seal user actions",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -368,13 +402,10 @@
           "* Table of Seal user actions"
         ],
         "def" : "Contexts.sealUserActions()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
+        "name" : "sealUserActions"
       },
       {
-        "name" : "apply",
+        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application\/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created.\n\n7) Focuses the window given in config.focused\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
         "stripped_doc" : [
           "Apply given context:",
           "",
@@ -390,15 +421,22 @@
           "",
           "5) Applies config.layout with hs.layout.apply()",
           "",
-          "6) Focuses the window given in config.focused",
+          "6) Creates a set of hs.window.filters subscriptions for each application\/window",
+          "   in the given layout and applies the relevant portion of the layout",
+          "   when relevant new windows are created.",
           "",
-          "7) Sets the default input device found in defaultInputDevice",
+          "7) Focuses the window given in config.focused",
           "",
-          "8) Sets the default output device found in defaultOutputDevice",
+          "8) Sets the default input device found in defaultInputDevice",
+          "",
+          "9) Sets the default output device found in defaultOutputDevice",
           ""
         ],
         "desc" : "Apply given context:",
-        "doc" : "Apply given context:\n\n1) Calls unapply() on the previously applied context.\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Focuses the window given in config.focused\n\n7) Sets the default input device found in defaultInputDevice\n\n8) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* None\n\nReturns:\n* true on success, false on failure",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -408,19 +446,19 @@
           "* true on success, false on failure"
         ],
         "def" : "Contexts:apply()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
+        "name" : "apply"
       },
       {
-        "name" : "applyPrevious",
+        "doc" : "Switch to previous context stored in Contexts.previous by unapply()\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
         "stripped_doc" : [
           "Switch to previous context stored in Contexts.previous by unapply()",
           ""
         ],
         "desc" : "Switch to previous context stored in Contexts.previous by unapply()",
-        "doc" : "Switch to previous context stored in Contexts.previous by unapply()\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -430,13 +468,10 @@
           "* true on success, false on error"
         ],
         "def" : "Contexts:applyPrevious()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
+        "name" : "applyPrevious"
       },
       {
-        "name" : "bindHotKeys",
+        "doc" : "The method accepts a single parameter, which is a table. The keys of the table\nare strings that describe the action performed, and the values of the table are\ntables containing modifiers and keynames\/keycodes. E.g.\n  {\n    chooser = {{\"cmd\", \"alt\"}, \"c\"},\n    previous = {{\"cmd\", \"alt\"}, \"p\"}\n   }\n\n\nParameters:\n * mapping - Table of action to key mappings\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "The method accepts a single parameter, which is a table. The keys of the table",
           "are strings that describe the action performed, and the values of the table are",
@@ -449,7 +484,10 @@
           ""
         ],
         "desc" : "The method accepts a single parameter, which is a table. The keys of the table",
-        "doc" : "The method accepts a single parameter, which is a table. The keys of the table\nare strings that describe the action performed, and the values of the table are\ntables containing modifiers and keynames\/keycodes. E.g.\n  {\n    chooser = {{\"cmd\", \"alt\"}, \"c\"},\n    previous = {{\"cmd\", \"alt\"}, \"p\"}\n   }\n\n\nParameters:\n * mapping - Table of action to key mappings\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * mapping - Table of action to key mappings",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -459,43 +497,19 @@
           " * Contexts object"
         ],
         "def" : "Contexts:bindHotKeys(table)",
-        "parameters" : [
-          " * mapping - Table of action to key mappings",
-          ""
-        ]
+        "name" : "bindHotKeys"
       },
       {
-        "name" : "chooser",
-        "stripped_doc" : [
-          "Display a hs.chooser with all contexts and apply selected.",
-          "If the Context has an 'image' attribute, it will be used next",
-          "to the title",
-          ""
-        ],
-        "desc" : "Display a hs.chooser with all contexts and apply selected.",
-        "doc" : "Display a hs.chooser with all contexts and apply selected.\nIf the Context has an 'image' attribute, it will be used next\nto the title\n\nParameters:\n* None\n\nReturns:\n* Nothing",
-        "notes" : [
-
-        ],
-        "signature" : "Contexts:chooser()",
-        "type" : "Method",
-        "returns" : [
-          "* Nothing"
-        ],
-        "def" : "Contexts:chooser()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
-      },
-      {
-        "name" : "debug",
+        "doc" : "Enable or disable debugging\n\nParameters:\n * enable - Boolean indicating whether debugging should be on\n\nReturns:\n * Nothing",
         "stripped_doc" : [
           "Enable or disable debugging",
           ""
         ],
         "desc" : "Enable or disable debugging",
-        "doc" : "Enable or disable debugging\n\nParameters:\n * enable - Boolean indicating whether debugging should be on\n\nReturns:\n * Nothing",
+        "parameters" : [
+          " * enable - Boolean indicating whether debugging should be on",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -505,13 +519,10 @@
           " * Nothing"
         ],
         "def" : "Contexts:debug(enable)",
-        "parameters" : [
-          " * enable - Boolean indicating whether debugging should be on",
-          ""
-        ]
+        "name" : "debug"
       },
       {
-        "name" : "init",
+        "doc" : "Initializes a Contexts\nWhen a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua\nfrom the relevant s.\nDo generally not perform any work, map any hotkeys, start any timers\/watchers\/etc.\nin the main scope of your init.lua. Instead, it should simply prepare an object\nwith methods to be used later, then return the object.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "Initializes a Contexts",
           "When a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua",
@@ -522,7 +533,10 @@
           ""
         ],
         "desc" : "Initializes a Contexts",
-        "doc" : "Initializes a Contexts\nWhen a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua\nfrom the relevant s.\nDo generally not perform any work, map any hotkeys, start any timers\/watchers\/etc.\nin the main scope of your init.lua. Instead, it should simply prepare an object\nwith methods to be used later, then return the object.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -532,19 +546,19 @@
           " * Contexts object"
         ],
         "def" : "Contexts:init()",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "name" : "init"
       },
       {
-        "name" : "start",
+        "doc" : "Start background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "Start background activity.",
           ""
         ],
         "desc" : "Start background activity.",
-        "doc" : "Start background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -554,19 +568,19 @@
           " * Contexts object"
         ],
         "def" : "Contexts:start()",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "name" : "start"
       },
       {
-        "name" : "stop",
+        "doc" : "Stop background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
         "stripped_doc" : [
           "Stop background activity.",
           ""
         ],
         "desc" : "Stop background activity.",
-        "doc" : "Stop background activity.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -576,13 +590,10 @@
           " * Contexts object"
         ],
         "def" : "Contexts:stop()",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "name" : "stop"
       },
       {
-        "name" : "unapply",
+        "doc" : "Unapply context:\n\n1) Calls config.exitFunction() if present.\n\n2) Saves context in Contet.previous for a subsequent call to Contexts.\n\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
         "stripped_doc" : [
           "Unapply context:",
           "",
@@ -593,7 +604,10 @@
           ""
         ],
         "desc" : "Unapply context:",
-        "doc" : "Unapply context:\n\n1) Calls config.exitFunction() if present.\n\n2) Saves context in Contet.previous for a subsequent call to Contexts.\n\n\nParameters:\n* None\n\nReturns:\n* true on success, false on error",
+        "parameters" : [
+          "* None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -603,14 +617,8 @@
           "* true on success, false on error"
         ],
         "def" : "Contexts:unapply()",
-        "parameters" : [
-          "* None",
-          ""
-        ]
+        "name" : "unapply"
       }
-    ],
-    "Field" : [
-
     ],
     "Command" : [
 

@@ -1,14 +1,28 @@
 --- === Contexts ===
 --- Allow defining contexts and switching between them.
---- A context is a set of windows around hs.layout and other
---- state.
+--- A context is based on a hs.layout configuration of
+--- a set of applications and windows and their layout
+--- and adds the following:
+--- * Automatically launches applications that are not running in the layout.
+--- * Automatically unminimizes windows in the layout.
+--- * Allows for functions that are called when the layout is applied
+---   and unapplied.
+--- * Creates a set of hs.window.filter subscriptions for windows in the
+---   layout and applies the relevant portion of the layout for any relevant
+---   new windows that are created.
+--- * Allows setting the default input and output audio device.
+---
+--- Additionally, to allow for interactive selection of Contextsr:
+--- * The chooser() method creates a hs.chooser() instance to choose created layouts
+--- * The sealUserActions() method creates user actions for the Seal spoon for each
+---   created Context.
 
 local Contexts = {}
 
 
 -- Metadata
 Contexts.name="Contexts"
-Contexts.version="0.6"
+Contexts.version="0.7"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
@@ -108,6 +122,9 @@ end
 ---  * Contexts object
 function Contexts:stop()
   self.screenWatcher:stop()
+  if self.current then
+    self.current:unapply()
+  end
   return self
 end
 
