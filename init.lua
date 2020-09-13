@@ -81,6 +81,8 @@ function Contexts:init()
 
   -- Set up screen watcher
   self.screenWatcher = hs.screen.watcher.new(hs.fnutils.partial(Contexts.screenWatcherCallback, self))
+  -- Guard to prevent re-entry into callback
+  self.inScreenWatcherCallback = false
 
   -- Path to this file itself
   -- See also http://www.hammerspoon.org/docs/hs.spoons.html#resourcePath
@@ -138,9 +140,15 @@ end
 -- Returns:
 -- * Nothing
 function Contexts:screenWatcherCallback()
-  if self.current then
+  -- Prevent the handling of a screen change from spawning another
+  -- handling of a screen change.
+  if self.inScreenWatcherCallback then
+    self.log.w("Screen change detected while processing screen change. Ignoring.")
+  elseif self.current then
     self.log.d("Screen change detected. Re-applying context.")
+    self.inScreenWatcherCallback = true
     self.current:apply()
+    self.inScreenWatcherCallback = false
   end
 end
 
