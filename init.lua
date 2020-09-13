@@ -326,7 +326,7 @@ function Contexts:_apply()
 
     -- First time called, create hs.window.filters
     if not self.wfilters then
-      self.log.d("Creating window filters...")
+      self.log.d("Creating window filters subscriptions.")
       self.wfilters = {}
       hs.fnutils.each(self.config.layout,
         function(rule)
@@ -335,23 +335,19 @@ function Contexts:_apply()
           self.log.df("Creating window.filter for %s %s", appName, winName)
           local filter = hs.window.filter.new(false)
           filter:setAppFilter("zoom.us", {allowTitles="Zoom Meeting"})
-          table.insert(self.wfilters, {filter, rule})
+          filter:subscribe(hs.window.filter.windowCreated,
+            function(win, appName, event)
+              self.log.df(appName .. " window created - applying layout")
+              hs.layout.apply({rule})
+            end)
+            table.insert(self.wfilters, filter)
         end)
+    else
+      self.log.d("Resuming window filter subscriptions.")
+      hs.fnutils.each(self.wfilters, function(f) f:resume() end)
     end
 
-    self.log.d("Subscribing to window filters...")
-    hs.fnutils.each(self.wfilters,
-      function(f)
-        f[1]:subscribe(hs.window.filter.windowCreated,
-          function(win, appName, event)
-            self.log.df(appName .. " created")
-            hs.layout.apply({f[2]})
-          end)
-      end)
-
     self.log.d("Applying layout")
-    -- XXX There is a race condition in that apps we have launched above
-    -- are unlikely to be running yet.
     hs.layout.apply(self.config.layout)
   end
 
@@ -426,7 +422,8 @@ end
 -- * true on success, false on error
 function Contexts:_unapply()
   if self.wfilters then
-    hs.fnutils.each(self.wfilters, function(f) f[1]:unsubscribeAll() end)
+    self.log.d("Pausing window filter subscriptions")
+    hs.fnutils.each(self.wfilters, function(f) f:pause() end)
   end
 
   if self.config.exitFunction then
