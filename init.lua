@@ -291,7 +291,7 @@ function Contexts:_apply()
   self.log.df("Applying context %s", title)
 
   if self.config.enterFunction then
-    local ok, err = pcall(self.config.enterFunction)
+    local ok, err = pcall(self.config.enterFunction, debug.traceback)
     if not ok then
       self.log.ef("Context %s: enterFunction() returned error: %s", title, err)
       return false
@@ -435,7 +435,7 @@ function Contexts:_unapply()
   end
 
   if self.config.exitFunction then
-    local ok, err = pcall(self.config.exitFunction)
+    local ok, err = pcall(self.config.exitFunction, debug.traceback)
     if not ok then
       self.log.ef("Context %s: exitFunction() returned error: %s", self.config.title, err)
       return false
