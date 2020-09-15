@@ -362,11 +362,17 @@ function Contexts:_apply()
   if self.config.focused then
     local appName = self.config.focused[1]
     local winName = self.config.focused[2]
-    self.log.df("Focusing: AppName %s WindowName %s", appName, winName)
     local app = hs.application.get(appName)
-    local win = winName and app:getWindow(winName) or app:mainWindow()
-    if win then
-      win:focus()
+    if app then
+      local win = winName and app:getWindow(winName) or app:mainWindow()
+      if win then
+        self.log.df("Focusing: %s", win:title())
+        win:focus()
+      else
+        self.log.df("Cannot focus on %s/%s: window not found.", appName, winName)
+      end
+    else
+      self.log.df("Cannot focus on %s/%s: app not found.", appName, winName)
     end
   end
 
