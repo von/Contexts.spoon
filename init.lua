@@ -535,9 +535,13 @@ end
 --- * None
 ---
 --- Returns:
---- * Table of Seal user actions
+--- * Table of Seal user actions, nil on error
 function Contexts.sealUserActions()
   local actions = {}
+  if not Contexts.contexts then
+    Contexts.log.e("sealUserActions() called but Contexts not initialized")
+    return nil
+  end
   hs.fnutils.each(
     Contexts.contexts,
     function(c)
