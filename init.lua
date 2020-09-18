@@ -11,6 +11,7 @@
 ---   layout and applies the relevant portion of the layout for any relevant
 ---   new windows that are created.
 --- * Allows setting the default input and output audio device.
+--- * Re-applies the layout on screen layout changes.
 ---
 --- Additionally, to allow for interactive selection of Contextsr:
 --- * The chooser() method creates a hs.chooser() instance to choose created layouts
@@ -19,14 +20,14 @@
 
 local Contexts = {}
 
-
--- Metadata
+-- Metadata {{{ --
 Contexts.name="Contexts"
 Contexts.version="0.7"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
 Contexts.homepage="https://github.com/von/Contexts.spoon"
+-- }}} Metadata --
 
 -- debug() {{{ --
 --- Contexts:debug(enable)
@@ -100,6 +101,7 @@ function Contexts:init()
 end
 -- }}} init() --
 
+-- start() {{{ --
 --- Contexts:start()
 --- Method
 --- Start background activity.
@@ -113,7 +115,9 @@ function Contexts:start()
   self.screenWatcher:start()
   return self
 end
+-- }}} start() --
 
+-- stop() {{{ --
 --- Contexts:stop()
 --- Method
 --- Stop background activity.
@@ -130,7 +134,9 @@ function Contexts:stop()
   end
   return self
 end
+-- }}} stop() --
 
+-- screenWatcherCallback() {{{ --
 -- Contexts:screenWatcherCallback()
 -- Internal function
 -- Callback for self.screenWatcher
@@ -158,6 +164,7 @@ function Contexts:screenWatcherCallback(activeScreenChange)
     self.inScreenWatcherCallback = false
   end
 end
+-- }}} screenWatcherCallback() --
 
 -- _applyLayoutRecursive {{{ --
 --- Contexts:_applyLayoutRecursive()
@@ -482,7 +489,6 @@ function Contexts:_unapply()
   return true
 end
 -- }}} _unapply() --
-
 
 -- applyPrevious() {{{ --
 --- Contexts:applyPrevious()
