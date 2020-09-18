@@ -512,8 +512,8 @@ end
 -- }}} applyPrevious() --
 
 -- chooser() {{{ --
---- Contexts.chooser()
---- Function
+--- Contexts:chooser()
+--- Method
 --- Display a hs.chooser with all contexts and apply selected.
 --- If the Context has an 'image' attribute, it will be used next
 --- to the title
@@ -523,7 +523,7 @@ end
 ---
 --- Returns:
 --- * Nothing
-function Contexts.chooser()
+function Contexts:chooser()
   -- Contexts instances don't convert into NSObjects so we can't include them
   -- in choices
   local choices = hs.fnutils.map(
@@ -538,30 +538,30 @@ function Contexts.chooser()
 
   local function callback(choice)
     if choice then
-      Contexts.log.df("Context %s chosen", choice.text)
+      self.log.df("Context %s chosen", choice.text)
       local context = hs.fnutils.find(
         Contexts.contexts,
         function(c) return c.config.title == choice.text end)
       if not context then
-        Contexts.log.ef("Could not find chosen context %s", choice.text)
+        self.log.ef("Could not find chosen context %s", choice.text)
         return
       end
       context:apply()
     else
-      Contexts.log.d("Choice is nil")
+      self.log.d("Choice is nil")
     end
   end
 
   local chooser = hs.chooser.new(callback)
   chooser:choices(choices)
-  Contexts.log.d("Launching chooser")
+  self.log.d("Launching chooser")
   chooser:show()
 end
 -- }}} chooser() --
 
 -- sealUserActions {{{ --
---- Contexts.sealUserActions()
---- Function
+--- Contexts:sealUserActions()
+--- Method
 --- Return a table suitable for Seal.plugins.useractions.actions
 --- See http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html
 ---
@@ -570,10 +570,10 @@ end
 ---
 --- Returns:
 --- * Table of Seal user actions, nil on error
-function Contexts.sealUserActions()
+function Contexts:sealUserActions()
   local actions = {}
   if not Contexts.contexts then
-    Contexts.log.e("sealUserActions() called but Contexts not initialized")
+    self.log.e("sealUserActions() called but Contexts not initialized")
     return nil
   end
   hs.fnutils.each(
