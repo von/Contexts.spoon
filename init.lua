@@ -154,10 +154,31 @@ function Contexts:screenWatcherCallback(activeScreenChange)
   elseif self.current then
     self.log.d("Screen change detected. Re-applying context.")
     self.inScreenWatcherCallback = true
-    self.current:apply()
+    self.current:_applyLayoutRecursive()
     self.inScreenWatcherCallback = false
   end
 end
+
+-- _applyLayoutRecursive {{{ --
+--- Contexts:_applyLayoutRecursive()
+--- Method
+--- Apply layout for given context and all the context it inherits from.
+---
+--- Parameters:
+--- * None
+---
+--- Returns:
+--- * Nothing
+function Contexts:_applyLayoutRecursive()
+  if self.config.inherits then
+    self.log.df("Applying inherited context...")
+    self.config.inherits:_applyLayoutRecursive()
+  end
+
+  self.log.d("Applying layout")
+  hs.layout.apply(self.config.layout)
+end
+-- }}} _applyLayoutRecursive --
 
 -- bindHotKeys() {{{ --
 --- Contexts:bindHotKeys(table)
