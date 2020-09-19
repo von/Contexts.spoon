@@ -160,32 +160,11 @@ function Contexts:screenWatcherCallback(activeScreenChange)
   elseif self.current then
     self.log.d("Screen change detected. Re-applying context.")
     self.inScreenWatcherCallback = true
-    self.current:_applyLayoutRecursive()
+    self.current:apply(true)  -- true == reapply
     self.inScreenWatcherCallback = false
   end
 end
 -- }}} screenWatcherCallback() --
-
--- _applyLayoutRecursive {{{ --
---- Contexts:_applyLayoutRecursive()
---- Method
---- Apply layout for given context and all the context it inherits from.
----
---- Parameters:
---- * None
----
---- Returns:
---- * Nothing
-function Contexts:_applyLayoutRecursive()
-  if self.config.inherits then
-    self.log.df("Applying inherited context...")
-    self.config.inherits:_applyLayoutRecursive()
-  end
-
-  self.log.d("Applying layout")
-  hs.layout.apply(self.config.layout)
-end
--- }}} _applyLayoutRecursive --
 
 -- bindHotKeys() {{{ --
 --- Contexts:bindHotKeys(table)
@@ -195,7 +174,8 @@ end
 --- tables containing modifiers and keynames/keycodes. E.g.
 ---   {
 ---     chooser = {{"cmd", "alt"}, "c"},
----     previous = {{"cmd", "alt"}, "p"}
+---     previous = {{"cmd", "alt"}, "p"},
+---     reapply = {{"cmd", "alt"}, "r"}
 ---    }
 ---
 ---
@@ -208,7 +188,8 @@ end
 function Contexts:bindHotKeys(mapping)
   local spec = {
     chooser = hs.fnutils.partial(self.chooser, self),
-    previous = hs.fnutils.partial(self.previous, self)
+    previous = hs.fnutils.partial(self.previous, self),
+    reapply = hs.fnutils.partial(self.reapply, self)
   }
   hs.spoons.bindHotkeysToSpec(spec, mapping)
   return self
@@ -253,11 +234,11 @@ end
 --- Method
 --- Apply given context:
 ---
---- 1) Calls unapply() on the previously applied context.
+--- 1) Calls unapply() on the previously applied context (unless we are reapplying)
 ---
 --- Following is handled by _apply():
 ---
---- 2) Calls config.enterFunction() if present
+--- 2) Calls config.enterFunction() if present and not reapplying
 ---
 --- 3) Starts any applications listed in config.layout if they are not running.
 ---
@@ -267,7 +248,7 @@ end
 ---
 --- 6) Creates a set of hs.window.filters subscriptions for each application/window
 ---    in the given layout and applies the relevant portion of the layout
----    when relevant new windows are created.
+---    when relevant new windows are created. Skipped if reapplying.
 ---
 --- 7) Focuses the window given in config.focused
 ---
@@ -276,30 +257,32 @@ end
 --- 9) Sets the default output device found in defaultOutputDevice
 ---
 --- Parameters:
---- * None
+--- * reapply [options]: True if we are re-applying a context.
 ---
 --- Returns:
 --- * true on success, false on failure
-function Contexts:apply()
+function Contexts:apply(reapply)
   if not self.config then
     self.log.w("Context:apply() called with no configuation")
     return false
   end
 
-  if Contexts.current then
-    -- Don't unapply current context if we're switching to it.
-    -- Not sure this is right, but trying this.
-    if Contexts.current == self then
-      self.log.df("Changing to current context. Not unapplying.")
-    else
-      if not Contexts.current:unapply() then
-        return false
+  if not reapply then
+    if Contexts.current then
+      -- Don't unapply current context if we're switching to it.
+      -- Not sure this is right, but trying this.
+      if Contexts.current == self then
+        self.log.df("Changing to current context. Not unapplying.")
+      else
+        if not Contexts.current:unapply() then
+          return false
+        end
       end
     end
+    Contexts.current = self
   end
-  Contexts.current = self
 
-  return self:_apply()
+  return self:_apply(reapply)
 end
 -- }}} apply() --
 
@@ -311,25 +294,29 @@ end
 -- activities should be handled by apply()
 --
 -- Parameters:
--- * None
+-- * reapply [optional]: If true, we are reapplying a context.
 --
 -- Returns:
 -- * true on success, false on failure
-function Contexts:_apply()
+function Contexts:_apply(reapply)
 
   if self.config.inherits then
     self.log.df("Applying inherited context...")
-    self.config.inherits:_apply()
+    self.config.inherits:_apply(reapply)
   end
 
   local title = self.config.title
-  self.log.df("Applying context %s", title)
+  if reapply then
+    self.log.df("Re-applying context %s", title)
+  else
+    self.log.df("Applying context %s", title)
 
-  if self.config.enterFunction then
-    local ok, err = pcall(self.config.enterFunction, debug.traceback)
-    if not ok then
-      self.log.ef("Context %s: enterFunction() returned error: %s", title, err)
-      return false
+    if self.config.enterFunction then
+      local ok, err = pcall(self.config.enterFunction, debug.traceback)
+      if not ok then
+        self.log.ef("Context %s: enterFunction() returned error: %s", title, err)
+        return false
+      end
     end
   end
 
@@ -367,27 +354,29 @@ function Contexts:_apply()
         end
       end)
 
-    -- First time called, create hs.window.filters
-    if not self.wfilters then
-      self.log.d("Creating window filters subscriptions.")
-      self.wfilters = {}
-      hs.fnutils.each(self.config.layout,
-        function(rule)
-          local appName = rule[1]
-          local winName = rule[2]
-          self.log.df("Creating window.filter for %s %s", appName, winName)
-          local filter = hs.window.filter.new(false)
-          filter:setAppFilter("zoom.us", {allowTitles="Zoom Meeting"})
-          filter:subscribe(hs.window.filter.windowCreated,
-            function(win, appName, event)
-              self.log.df(appName .. " window created - applying layout")
-              hs.layout.apply({rule})
-            end)
-            table.insert(self.wfilters, filter)
-        end)
-    else
-      self.log.d("Resuming window filter subscriptions.")
-      hs.fnutils.each(self.wfilters, function(f) f:resume() end)
+    if not reapply then
+      -- First time called, create hs.window.filters
+      if not self.wfilters then
+        self.log.d("Creating window filters subscriptions.")
+        self.wfilters = {}
+        hs.fnutils.each(self.config.layout,
+          function(rule)
+            local appName = rule[1]
+            local winName = rule[2]
+            self.log.df("Creating window.filter for %s %s", appName, winName)
+            local filter = hs.window.filter.new(false)
+            filter:setAppFilter("zoom.us", {allowTitles="Zoom Meeting"})
+            filter:subscribe(hs.window.filter.windowCreated,
+              function(win, appName, event)
+                self.log.df(appName .. " window created - applying layout")
+                hs.layout.apply({rule})
+              end)
+              table.insert(self.wfilters, filter)
+          end)
+      else
+        self.log.d("Resuming window filter subscriptions.")
+        hs.fnutils.each(self.wfilters, function(f) f:resume() end)
+      end
     end
 
     self.log.d("Applying layout")
@@ -434,6 +423,28 @@ function Contexts:_apply()
   return true
 end
 -- }}} _apply() --
+
+-- reapply() {{{ --
+--- reapply()
+--- Function
+--- Reapply the current Context. This is equivalent to calling apply(true) fur
+--- the current context.
+---
+--- Parameters:
+--- * None
+---
+--- Returns:
+--- * True on success, false on error
+function Contexts:reapply()
+  if not Contexts.current then
+    Contexts.log.e("reapply() called without active context")
+    return false
+  end
+
+  Contexts.log.df("Re-applying context %s", Contexts.current.config.title)
+  return Contexts.current:apply(true)
+end
+-- }}} reapply() --
 
 -- unapply() {{{ --
 --- Contexts:unapply()
@@ -563,6 +574,8 @@ end
 --- Contexts:sealUserActions()
 --- Method
 --- Return a table suitable for Seal.plugins.useractions.actions
+--- Table includes an action for each context, plus an action to
+--- reload the current context.
 --- See http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html
 ---
 --- Parameters:
@@ -584,6 +597,9 @@ function Contexts:sealUserActions()
         icon = c.config.image
       }
     end)
+  actions["Reapply Context"] = {
+      fn = hs.fnutils.partial(Contexts.reapply, Contexts)
+    }
   return actions
 end
 -- }}} sealUserActions --
