@@ -1,0 +1,438 @@
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hammerspoon docs: Contexts</title>
+    <style type="text/css">
+      a { text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      th { background-color: #DDDDDD; vertical-align: top; padding: 3px; }
+      td { width: 100%; background-color: #EEEEEE; vertical-align: top; padding: 3px; }
+      table { width: 100% ; border: 1px solid #0; text-align: left; }
+      section > table table td { width: 0; }
+    </style>
+    <link rel="stylesheet" href="docs.css" type="text/css" media="screen" />
+  </head>
+  <body>
+    <header>
+      <h1><a href="./index.html">docs</a> &raquo; Contexts</h1>
+      <p>A context is based on a hs.layout configuration of
+a set of applications and windows and their layout
+and adds the following:</p>
+<ul>
+<li>Automatically launches applications that are not running in the layout.</li>
+<li>Automatically unminimizes windows in the layout.</li>
+<li>Allows for functions that are called when the layout is applied
+and unapplied.</li>
+<li>Creates a set of hs.window.filter subscriptions for windows in the
+layout and applies the relevant portion of the layout for any relevant
+new windows that are created.</li>
+<li>Allows setting the default input and output audio device.</li>
+<li>Re-applies the layout on screen layout changes.</li>
+</ul>
+<p>Additionally, to allow for interactive selection of Contextsr:</p>
+<ul>
+<li>The chooser() method creates a hs.chooser() instance to choose created layouts</li>
+<li>The sealUserActions() method creates user actions for the Seal spoon for each
+created Context.</li>
+</ul>
+
+      </header>
+      <h3>API Overview</h3>
+      <ul>
+        <li>Functions - API calls offered directly by the extension</li>
+          <ul>
+            <li><a href="#applyPrevious">applyPrevious</a></li>
+            <li><a href="#bindHotKeys">bindHotKeys</a></li>
+            <li><a href="#chooser">chooser</a></li>
+            <li><a href="#debug">debug</a></li>
+            <li><a href="#init">init</a></li>
+            <li><a href="#reapply">reapply</a></li>
+            <li><a href="#sealUserActions">sealUserActions</a></li>
+            <li><a href="#start">start</a></li>
+            <li><a href="#stop">stop</a></li>
+          </ul>
+        <li>Constructors - API calls which return an object, typically one that offers API methods</li>
+          <ul>
+            <li><a href="#new">new</a></li>
+          </ul>
+        <li>Methods - API calls which can only be made on an object returned by a constructor</li>
+          <ul>
+            <li><a href="#apply">apply</a></li>
+            <li><a href="#unapply">unapply</a></li>
+          </ul>
+      </ul>
+      <h3>API Documentation</h3>
+        <h4 class="documentation-section">Functions</h4>
+          <section id="applyPrevious">
+            <a name="//apple_ref/cpp/Function/applyPrevious" class="dashAnchor"></a>
+            <h5><a href="#applyPrevious">applyPrevious</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:applyPrevious()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Switch to previous context stored in Contexts.previous by unapply()</p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>true on success, false on error</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="bindHotKeys">
+            <a name="//apple_ref/cpp/Function/bindHotKeys" class="dashAnchor"></a>
+            <h5><a href="#bindHotKeys">bindHotKeys</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:bindHotKeys(table)</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>The method accepts a single parameter, which is a table. The keys of the table
+are strings that describe the action performed, and the values of the table are
+tables containing modifiers and keynames/keycodes. E.g.
+  {
+    chooser = {{"cmd", "alt"}, "c"},
+    previous = {{"cmd", "alt"}, "p"},
+    reapply = {{"cmd", "alt"}, "r"}
+   }</p>
+<p>Parameters:</p>
+<ul>
+<li>mapping - Table of action to key mappings</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Contexts object</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="chooser">
+            <a name="//apple_ref/cpp/Function/chooser" class="dashAnchor"></a>
+            <h5><a href="#chooser">chooser</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:chooser()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Display a hs.chooser with all contexts and apply selected.
+If the Context has an 'image' attribute, it will be used next
+to the title</p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Nothing</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="debug">
+            <a name="//apple_ref/cpp/Function/debug" class="dashAnchor"></a>
+            <h5><a href="#debug">debug</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:debug(enable)</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Enable or disable debugging</p>
+<p>Parameters:</p>
+<ul>
+<li>enable - Boolean indicating whether debugging should be on</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Nothing</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="init">
+            <a name="//apple_ref/cpp/Function/init" class="dashAnchor"></a>
+            <h5><a href="#init">init</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:init()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Initializes a Contexts
+When a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua
+from the relevant s.
+Do generally not perform any work, map any hotkeys, start any timers/watchers/etc.
+in the main scope of your init.lua. Instead, it should simply prepare an object
+with methods to be used later, then return the object.</p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Contexts object</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="reapply">
+            <a name="//apple_ref/cpp/Function/reapply" class="dashAnchor"></a>
+            <h5><a href="#reapply">reapply</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:reapply()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Reapply the current Context. This is equivalent to calling apply(true) fur
+the current context.</p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>True on success, false on error</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="sealUserActions">
+            <a name="//apple_ref/cpp/Function/sealUserActions" class="dashAnchor"></a>
+            <h5><a href="#sealUserActions">sealUserActions</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:sealUserActions()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Return a table suitable for Seal.plugins.useractions.actions
+Table includes an action for each context, plus an action to
+reload the current context.
+See <a href="http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html">http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html</a></p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Table of Seal user actions, nil on error</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="start">
+            <a name="//apple_ref/cpp/Function/start" class="dashAnchor"></a>
+            <h5><a href="#start">start</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:start()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Start background activity.</p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Contexts object</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="stop">
+            <a name="//apple_ref/cpp/Function/stop" class="dashAnchor"></a>
+            <h5><a href="#stop">stop</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:stop()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Function</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Stop background activity.</p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Contexts object</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+        <h4 class="documentation-section">Constructors</h4>
+          <section id="new">
+            <a name="//apple_ref/cpp/Constructor/new" class="dashAnchor"></a>
+            <h5><a href="#new">new</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts.new()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Constructor</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Create a new Contexts instance</p>
+<p>Parameters:</p>
+<ul>
+<li>config: A table containing the following keys:<ul>
+<li>title (string) [Required]: Title of context for display to user</li>
+<li>image (hs.image) [Optional]: chooser() will use this image</li>
+<li>layout (table) [Optional]: A table suitable for use with hs.layout.apply</li>
+<li>enterFunction (function) [Optional]: A function called when context is applied</li>
+<li>exitFunction (function) [Optional]: A function called when context is exited</li>
+<li>focused (dictionary) [Optional]: Window to focus on. First element is application,
+second optional element is window name.</li>
+<li>defaultInputDevice (table) [Optional]: List of strings identifying input audio
+devices.  First input device found, will be set to the default.</li>
+<li>defaultOutputDevice (table) [Optional]: List of strings identifying output
+audio devices. First output device found, will be set to the default.</li>
+</ul>
+</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Contexts instance</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+        <h4 class="documentation-section">Methods</h4>
+          <section id="apply">
+            <a name="//apple_ref/cpp/Method/apply" class="dashAnchor"></a>
+            <h5><a href="#apply">apply</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:apply()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Method</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Apply given context:</p>
+<p>1) Calls unapply() on the previously applied context (unless we are reapplying)</p>
+<p>Following is handled by _apply():</p>
+<p>2) Calls config.enterFunction() if present and not reapplying</p>
+<p>3) Starts any applications listed in config.layout if they are not running.</p>
+<p>4) Unminimizes and raises any windows listed in config.layout if needed.</p>
+<p>5) Applies config.layout with hs.layout.apply()</p>
+<p>6) Creates a set of hs.window.filters subscriptions for each application/window
+   in the given layout and applies the relevant portion of the layout
+   when relevant new windows are created. Skipped if reapplying.</p>
+<p>7) Focuses the window given in config.focused</p>
+<p>8) Sets the default input device found in defaultInputDevice</p>
+<p>9) Sets the default output device found in defaultOutputDevice</p>
+<p>Parameters:</p>
+<ul>
+<li>reapply [options]: True if we are re-applying a context.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>true on success, false on failure</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+          <section id="unapply">
+            <a name="//apple_ref/cpp/Method/unapply" class="dashAnchor"></a>
+            <h5><a href="#unapply">unapply</a></h5>
+            <table>
+              <tr>
+                <th>Signature</th>
+                <td><code>Contexts:unapply()</code></td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>Method</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td><p>Unapply context:</p>
+<p>1) Calls config.exitFunction() if present.</p>
+<p>2) Saves context in Contet.previous for a subsequent call to Contexts.</p>
+<p>Parameters:</p>
+<ul>
+<li>None</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>true on success, false on error</li>
+</ul>
+</td>
+              </tr>
+            </table>
+          </section>
+  </body>
+</html>

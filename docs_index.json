@@ -1,0 +1,79 @@
+[
+  {
+    "desc": "A context is based on a hs.layout configuration of",
+    "name": "Contexts",
+    "type": "Module"
+  },
+  {
+    "desc": "Switch to previous context stored in Contexts.previous by unapply()",
+    "module": "Contexts",
+    "name": "applyPrevious",
+    "type": "Function"
+  },
+  {
+    "desc": "The method accepts a single parameter, which is a table. The keys of the table",
+    "module": "Contexts",
+    "name": "bindHotKeys",
+    "type": "Function"
+  },
+  {
+    "desc": "Display a hs.chooser with all contexts and apply selected.",
+    "module": "Contexts",
+    "name": "chooser",
+    "type": "Function"
+  },
+  {
+    "desc": "Enable or disable debugging",
+    "module": "Contexts",
+    "name": "debug",
+    "type": "Function"
+  },
+  {
+    "desc": "Initializes a Contexts",
+    "module": "Contexts",
+    "name": "init",
+    "type": "Function"
+  },
+  {
+    "desc": "Reapply the current Context. This is equivalent to calling apply(true) fur",
+    "module": "Contexts",
+    "name": "reapply",
+    "type": "Function"
+  },
+  {
+    "desc": "Return a table suitable for Seal.plugins.useractions.actions",
+    "module": "Contexts",
+    "name": "sealUserActions",
+    "type": "Function"
+  },
+  {
+    "desc": "Start background activity.",
+    "module": "Contexts",
+    "name": "start",
+    "type": "Function"
+  },
+  {
+    "desc": "Stop background activity.",
+    "module": "Contexts",
+    "name": "stop",
+    "type": "Function"
+  },
+  {
+    "desc": "Create a new Contexts instance",
+    "module": "Contexts",
+    "name": "new",
+    "type": "Constructor"
+  },
+  {
+    "desc": "Apply given context:",
+    "module": "Contexts",
+    "name": "apply",
+    "type": "Method"
+  },
+  {
+    "desc": "Unapply context:",
+    "module": "Contexts",
+    "name": "unapply",
+    "type": "Method"
+  }
+]
