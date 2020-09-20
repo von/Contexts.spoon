@@ -31,7 +31,7 @@ Contexts.homepage="https://github.com/von/Contexts.spoon"
 
 -- debug() {{{ --
 --- Contexts:debug(enable)
---- Method
+--- Function
 --- Enable or disable debugging
 ---
 --- Parameters:
@@ -52,7 +52,7 @@ end
 
 -- init() {{{ --
 --- Contexts:init()
---- Method
+--- Function
 --- Initializes a Contexts
 --- When a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua
 --- from the relevant s.
@@ -103,7 +103,7 @@ end
 
 -- start() {{{ --
 --- Contexts:start()
---- Method
+--- Function
 --- Start background activity.
 ---
 --- Parameters:
@@ -119,7 +119,7 @@ end
 
 -- stop() {{{ --
 --- Contexts:stop()
---- Method
+--- Function
 --- Stop background activity.
 ---
 --- Parameters:
@@ -168,7 +168,7 @@ end
 
 -- bindHotKeys() {{{ --
 --- Contexts:bindHotKeys(table)
---- Method
+--- Function
 --- The method accepts a single parameter, which is a table. The keys of the table
 --- are strings that describe the action performed, and the values of the table are
 --- tables containing modifiers and keynames/keycodes. E.g.
@@ -198,7 +198,7 @@ end
 
 -- new() {{{ --
 --- Contexts.new()
---- Function
+--- Constructor
 --- Create a new Contexts instance
 ---
 --- Parameters:
@@ -425,7 +425,7 @@ end
 -- }}} _apply() --
 
 -- reapply() {{{ --
---- reapply()
+--- Contexts:reapply()
 --- Function
 --- Reapply the current Context. This is equivalent to calling apply(true) fur
 --- the current context.
@@ -503,7 +503,7 @@ end
 
 -- applyPrevious() {{{ --
 --- Contexts:applyPrevious()
---- Method
+--- Function
 --- Switch to previous context stored in Contexts.previous by unapply()
 ---
 --- Parameters:
@@ -524,7 +524,7 @@ end
 
 -- chooser() {{{ --
 --- Contexts:chooser()
---- Method
+--- Function
 --- Display a hs.chooser with all contexts and apply selected.
 --- If the Context has an 'image' attribute, it will be used next
 --- to the title
@@ -572,7 +572,7 @@ end
 
 -- sealUserActions {{{ --
 --- Contexts:sealUserActions()
---- Method
+--- Function
 --- Return a table suitable for Seal.plugins.useractions.actions
 --- Table includes an action for each context, plus an action to
 --- reload the current context.
