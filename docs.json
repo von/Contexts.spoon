@@ -173,16 +173,16 @@
       {
         "def": "Contexts:apply()",
         "desc": "Apply given context:",
-        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present and not reapplying\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n\n7) Focuses the window given in config.focused\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [options]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
+        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present and not reapplying\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n\n7) Focuses the window given in config.focused if not reapplying.\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [optional]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
         "name": "apply",
         "parameters": [
-          "* reapply [options]: True if we are re-applying a context."
+          "* reapply [optional]: True if we are re-applying a context."
         ],
         "returns": [
           "* true on success, false on failure"
         ],
         "signature": "Contexts:apply()",
-        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\nFollowing is handled by _apply():\n2) Calls config.enterFunction() if present and not reapplying\n3) Starts any applications listed in config.layout if they are not running.\n4) Unminimizes and raises any windows listed in config.layout if needed.\n5) Applies config.layout with hs.layout.apply()\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n7) Focuses the window given in config.focused\n8) Sets the default input device found in defaultInputDevice\n9) Sets the default output device found in defaultOutputDevice",
+        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\nFollowing is handled by _apply():\n2) Calls config.enterFunction() if present and not reapplying\n5) Applies config.layout with hs.layout.apply()\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n7) Focuses the window given in config.focused if not reapplying.\n8) Sets the default input device found in defaultInputDevice\n9) Sets the default output device found in defaultOutputDevice",
         "type": "Method"
       },
       {
@@ -203,21 +203,21 @@
     ],
     "Variable": [],
     "desc": "A context is based on a hs.layout configuration of",
-    "doc": "A context is based on a hs.layout configuration of\na set of applications and windows and their layout\nand adds the following:\n* Automatically launches applications that are not running in the layout.\n* Automatically unminimizes windows in the layout.\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Creates a set of hs.window.filter subscriptions for windows in the\n  layout and applies the relevant portion of the layout for any relevant\n  new windows that are created.\n* Allows setting the default input and output audio device.\n* Re-applies the layout on screen layout changes.\n\nAdditionally, to allow for interactive selection of Contextsr:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.",
+    "doc": "A context is based on a hs.layout configuration of\na set of applications and windows and their layout\nand adds the following:\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Creates a set of hs.window.filter subscriptions for windows in the\n  layout and applies the relevant portion of the layout for any relevant\n  new windows that are created.\n* Allows setting the default input and output audio device.\n* Re-applies the layout on screen layout changes.\n\nAdditionally, to allow for interactive selection of Contextsr:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.",
     "items": [
       {
         "def": "Contexts:apply()",
         "desc": "Apply given context:",
-        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present and not reapplying\n\n3) Starts any applications listed in config.layout if they are not running.\n\n4) Unminimizes and raises any windows listed in config.layout if needed.\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n\n7) Focuses the window given in config.focused\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [options]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
+        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present and not reapplying\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n\n7) Focuses the window given in config.focused if not reapplying.\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [optional]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
         "name": "apply",
         "parameters": [
-          "* reapply [options]: True if we are re-applying a context."
+          "* reapply [optional]: True if we are re-applying a context."
         ],
         "returns": [
           "* true on success, false on failure"
         ],
         "signature": "Contexts:apply()",
-        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\nFollowing is handled by _apply():\n2) Calls config.enterFunction() if present and not reapplying\n3) Starts any applications listed in config.layout if they are not running.\n4) Unminimizes and raises any windows listed in config.layout if needed.\n5) Applies config.layout with hs.layout.apply()\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n7) Focuses the window given in config.focused\n8) Sets the default input device found in defaultInputDevice\n9) Sets the default output device found in defaultOutputDevice",
+        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\nFollowing is handled by _apply():\n2) Calls config.enterFunction() if present and not reapplying\n5) Applies config.layout with hs.layout.apply()\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n7) Focuses the window given in config.focused if not reapplying.\n8) Sets the default input device found in defaultInputDevice\n9) Sets the default output device found in defaultOutputDevice",
         "type": "Method"
       },
       {
@@ -398,7 +398,7 @@
       }
     ],
     "name": "Contexts",
-    "stripped_doc": "a set of applications and windows and their layout\nand adds the following:\n* Automatically launches applications that are not running in the layout.\n* Automatically unminimizes windows in the layout.\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Creates a set of hs.window.filter subscriptions for windows in the\n  layout and applies the relevant portion of the layout for any relevant\n  new windows that are created.\n* Allows setting the default input and output audio device.\n* Re-applies the layout on screen layout changes.\n\nAdditionally, to allow for interactive selection of Contextsr:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.",
+    "stripped_doc": "a set of applications and windows and their layout\nand adds the following:\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Creates a set of hs.window.filter subscriptions for windows in the\n  layout and applies the relevant portion of the layout for any relevant\n  new windows that are created.\n* Allows setting the default input and output audio device.\n* Re-applies the layout on screen layout changes.\n\nAdditionally, to allow for interactive selection of Contextsr:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.",
     "submodules": [],
     "type": "Module"
   }

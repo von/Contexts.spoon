@@ -19,8 +19,6 @@
 a set of applications and windows and their layout
 and adds the following:</p>
 <ul>
-<li>Automatically launches applications that are not running in the layout.</li>
-<li>Automatically unminimizes windows in the layout.</li>
 <li>Allows for functions that are called when the layout is applied
 and unapplied.</li>
 <li>Creates a set of hs.window.filter subscriptions for windows in the
@@ -384,18 +382,16 @@ audio devices. First output device found, will be set to the default.</li>
 <p>1) Calls unapply() on the previously applied context (unless we are reapplying)</p>
 <p>Following is handled by _apply():</p>
 <p>2) Calls config.enterFunction() if present and not reapplying</p>
-<p>3) Starts any applications listed in config.layout if they are not running.</p>
-<p>4) Unminimizes and raises any windows listed in config.layout if needed.</p>
 <p>5) Applies config.layout with hs.layout.apply()</p>
 <p>6) Creates a set of hs.window.filters subscriptions for each application/window
    in the given layout and applies the relevant portion of the layout
    when relevant new windows are created. Skipped if reapplying.</p>
-<p>7) Focuses the window given in config.focused</p>
+<p>7) Focuses the window given in config.focused if not reapplying.</p>
 <p>8) Sets the default input device found in defaultInputDevice</p>
 <p>9) Sets the default output device found in defaultOutputDevice</p>
 <p>Parameters:</p>
 <ul>
-<li>reapply [options]: True if we are re-applying a context.</li>
+<li>reapply [optional]: True if we are re-applying a context.</li>
 </ul>
 <p>Returns:</p>
 <ul>

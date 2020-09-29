@@ -3,8 +3,6 @@
 --- A context is based on a hs.layout configuration of
 --- a set of applications and windows and their layout
 --- and adds the following:
---- * Automatically launches applications that are not running in the layout.
---- * Automatically unminimizes windows in the layout.
 --- * Allows for functions that are called when the layout is applied
 ---   and unapplied.
 --- * Creates a set of hs.window.filter subscriptions for windows in the
@@ -22,7 +20,7 @@ local Contexts = {}
 
 -- Metadata {{{ --
 Contexts.name="Contexts"
-Contexts.version="0.8"
+Contexts.version="0.9"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
@@ -240,24 +238,20 @@ end
 ---
 --- 2) Calls config.enterFunction() if present and not reapplying
 ---
---- 3) Starts any applications listed in config.layout if they are not running.
----
---- 4) Unminimizes and raises any windows listed in config.layout if needed.
----
 --- 5) Applies config.layout with hs.layout.apply()
 ---
 --- 6) Creates a set of hs.window.filters subscriptions for each application/window
 ---    in the given layout and applies the relevant portion of the layout
 ---    when relevant new windows are created. Skipped if reapplying.
 ---
---- 7) Focuses the window given in config.focused
+--- 7) Focuses the window given in config.focused if not reapplying.
 ---
 --- 8) Sets the default input device found in defaultInputDevice
 ---
 --- 9) Sets the default output device found in defaultOutputDevice
 ---
 --- Parameters:
---- * reapply [options]: True if we are re-applying a context.
+--- * reapply [optional]: True if we are re-applying a context.
 ---
 --- Returns:
 --- * true on success, false on failure
@@ -310,31 +304,24 @@ function Contexts:_apply(reapply)
     self.log.df("Re-applying context %s", title)
   else
     self.log.df("Applying context %s", title)
+  end
 
-    if self.config.enterFunction then
-      local ok, err = pcall(self.config.enterFunction, debug.traceback)
-      if not ok then
-        self.log.ef("Context %s: enterFunction() returned error: %s", title, err)
-        return false
-      end
+  if not reapply and self.config.enterFunction then
+    local ok, err = pcall(self.config.enterFunction, debug.traceback)
+    if not ok then
+      self.log.ef("Context %s: enterFunction() returned error: %s", title, err)
+      return false
     end
   end
 
-  if self.config.layout then
-
-    -- Make sure all the applications in layout are running
-    -- and all the windows are unminimized
+  if not reapply and self.config.layout then
+    -- Make sure all the windows in the layout are unminimized
     hs.fnutils.each(self.config.layout,
       function(rule)
         local appName = rule[1]
         local app = hs.application.get(appName)
         -- Use get() as it requires an exact match
-        if app == nil then
-          self.log.df("Launching application %s", app)
-          if not hs.application.launchOrFocus(appName) then
-            self.log.ef("Error launch application %s", appName)
-          end
-        else
+        if app then
           local winName = rule[2]
           local winFunc = function(w) self.log.df("Raising %s", w:title()) w:unminimize() w:raise() end
           if type(winName) == "string" then
@@ -353,37 +340,37 @@ function Contexts:_apply(reapply)
           end
         end
       end)
+  end
 
-    if not reapply then
-      -- First time called, create hs.window.filters
-      if not self.wfilters then
-        self.log.d("Creating window filters subscriptions.")
-        self.wfilters = {}
-        hs.fnutils.each(self.config.layout,
-          function(rule)
-            local appName = rule[1]
-            local winName = rule[2]
-            self.log.df("Creating window.filter for %s %s", appName, winName)
-            local filter = hs.window.filter.new(false)
-            filter:setAppFilter("zoom.us", {allowTitles="Zoom Meeting"})
-            filter:subscribe(hs.window.filter.windowCreated,
-              function(win, appName, event)
-                self.log.df(appName .. " window created - applying layout")
-                hs.layout.apply({rule})
-              end)
-              table.insert(self.wfilters, filter)
-          end)
-      else
-        self.log.d("Resuming window filter subscriptions.")
-        hs.fnutils.each(self.wfilters, function(f) f:resume() end)
-      end
+  if self.config.layout then
+    if not self.wfilters then
+    -- First time called, create hs.window.filters
+      self.log.d("Creating window filters subscriptions.")
+      self.wfilters = {}
+      hs.fnutils.each(self.config.layout,
+        function(rule)
+          local appName = rule[1]
+          local winName = rule[2]
+          self.log.df("Creating window.filter for %s %s", appName, winName)
+          local filter = hs.window.filter.new(false)
+          filter:setAppFilter("zoom.us", {allowTitles="Zoom Meeting"})
+          filter:subscribe(hs.window.filter.windowCreated,
+            function(win, appName, event)
+              self.log.df(appName .. " window created - applying layout")
+              hs.layout.apply({rule})
+            end)
+            table.insert(self.wfilters, filter)
+        end)
+    else
+      self.log.d("Resuming window filter subscriptions.")
+      hs.fnutils.each(self.wfilters, function(f) f:resume() end)
     end
 
     self.log.d("Applying layout")
     hs.layout.apply(self.config.layout)
   end
 
-  if self.config.focused then
+  if not reapply and self.config.focused then
     local appName = self.config.focused[1]
     local winName = self.config.focused[2]
     local app = hs.application.get(appName)

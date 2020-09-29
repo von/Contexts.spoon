@@ -4,8 +4,6 @@
 A context is based on a hs.layout configuration of
 a set of applications and windows and their layout
 and adds the following:
-* Automatically launches applications that are not running in the layout.
-* Automatically unminimizes windows in the layout.
 * Allows for functions that are called when the layout is applied
   and unapplied.
 * Creates a set of hs.window.filter subscriptions for windows in the
@@ -129,7 +127,7 @@ Additionally, to allow for interactive selection of Contextsr:
 | **Signature**                               | `Contexts:apply()`                                                                    |
 | **Type**                                    | Method                                                                     |
 | **Description**                             | Apply given context:                                                                     |
-| **Parameters**                              | <ul><li>* reapply [options]: True if we are re-applying a context.</li></ul> |
+| **Parameters**                              | <ul><li>* reapply [optional]: True if we are re-applying a context.</li></ul> |
 | **Returns**                                 | <ul><li>* true on success, false on failure</li></ul>          |
 
 | [unapply](#unapply)         |                                                                                     |
