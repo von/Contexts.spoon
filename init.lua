@@ -20,7 +20,7 @@ local Contexts = {}
 
 -- Metadata {{{ --
 Contexts.name="Contexts"
-Contexts.version="0.9"
+Contexts.version="0.10"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
@@ -226,6 +226,24 @@ function Contexts.new(config)
   return self
 end
 -- }}} new() --
+
+-- getByTitle() {{{ --
+--- Contexts.getByTitle()
+--- Constructor
+--- Given the title of a previous created Context, return its instance.
+---
+--- Parameters:
+--- * title: Context title
+---
+--- Returns:
+--- * Context instance, or nil if not found
+function Contexts.getByTitle(title)
+  local context = hs.fnutils.find(
+    Contexts.contexts,
+    function(c) return c.config.title == title end)
+  return context
+end
+-- }}} getByTitle() --
 
 -- {{{ apply() --
 --- Contexts:apply()
@@ -537,9 +555,7 @@ function Contexts:chooser()
   local function callback(choice)
     if choice then
       self.log.df("Context %s chosen", choice.text)
-      local context = hs.fnutils.find(
-        Contexts.contexts,
-        function(c) return c.config.title == choice.text end)
+      local context = Contexts.getByTitle(choice.text)
       if not context then
         self.log.ef("Could not find chosen context %s", choice.text)
         return
