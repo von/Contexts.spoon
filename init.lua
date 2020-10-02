@@ -80,7 +80,7 @@ function Contexts:init()
 
   -- Set up screen watcher
   -- Use newWithActiveScreen() so we can tell if it's a Active Screen change
-  self.screenWatcher = hs.screen.watcher.newWithActiveScreen(hs.fnutils.partial(Contexts.screenWatcherCallback, self))
+  self.screenWatcher = hs.screen.watcher.new(hs.fnutils.partial(Contexts.screenWatcherCallback, self))
   -- Guard to prevent re-entry into callback
   self.inScreenWatcherCallback = false
 
@@ -140,17 +140,11 @@ end
 -- Callback for self.screenWatcher
 --
 -- Parameters:
--- * activeScreenChange: true if active screen change, nil if screen layout change
+-- * None
 --
 -- Returns:
 -- * Nothing
-function Contexts:screenWatcherCallback(activeScreenChange)
-  -- An active screen change may be caused by the application of the layout
-  -- itself.
-  if activeScreenChange then
-    self.log.d("Ignoring active screen change")
-    return
-  end
+function Contexts:screenWatcherCallback()
   -- Prevent the handling of a screen change from spawning another
   -- handling of a screen change.
   if self.inScreenWatcherCallback then
