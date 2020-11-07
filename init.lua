@@ -567,7 +567,7 @@ function Contexts:chooser()
 end
 -- }}} chooser() --
 
--- sealUserActions {{{ --
+-- sealUserActions() {{{ --
 --- Contexts:sealUserActions()
 --- Function
 --- Return a table suitable for Seal.plugins.useractions.actions
@@ -576,12 +576,13 @@ end
 --- See http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html
 ---
 --- Parameters:
---- * None
+--- * actions (option): Table of Seal user actions. If provided, Context
+---   actions will be added to this table and returned.
 ---
 --- Returns:
 --- * Table of Seal user actions, nil on error
-function Contexts:sealUserActions()
-  local actions = {}
+function Contexts:sealUserActions(actions)
+  actions = actions or {}
   if not Contexts.contexts then
     self.log.e("sealUserActions() called but Contexts not initialized")
     return nil
@@ -599,7 +600,7 @@ function Contexts:sealUserActions()
     }
   return actions
 end
--- }}} sealUserActions --
+-- }}} sealUserActions() --
 
 return Contexts
 -- vim:foldmethod=marker:
