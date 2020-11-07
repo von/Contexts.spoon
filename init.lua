@@ -365,7 +365,11 @@ function Contexts:_apply(reapply)
           local winName = rule[2]
           self.log.df("Creating window.filter for %s %s", appName, winName)
           local filter = hs.window.filter.new(false)
-          filter:setAppFilter("zoom.us", {allowTitles="Zoom Meeting"})
+          local filterTable = {}
+          if winName and type(winName) == "string" then
+            filterTable.allowTitles = winName
+          end
+          filter:setAppFilter(appName, filterTable)
           filter:subscribe(hs.window.filter.windowCreated,
             function(win, appName, event)
               self.log.df(appName .. " window created - applying layout")
