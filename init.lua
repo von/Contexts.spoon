@@ -79,7 +79,6 @@ function Contexts:init()
   self.log = hs.logger.new("Contexts")
 
   -- Set up screen watcher
-  -- Use newWithActiveScreen() so we can tell if it's a Active Screen change
   self.screenWatcher = hs.screen.watcher.new(hs.fnutils.partial(Contexts.screenWatcherCallback, self))
   -- Guard to prevent re-entry into callback
   self.inScreenWatcherCallback = false
