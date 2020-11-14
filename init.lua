@@ -209,6 +209,10 @@ end
 --- Returns:
 --- * Contexts instance
 function Contexts.new(config)
+  if not config then
+    Contexts.log.e("new() called with nil configuration")
+    return nil
+  end
   Contexts.log.df("new context %s created", config.title)
   local self = setmetatable({}, Contexts)
   self.config = config
