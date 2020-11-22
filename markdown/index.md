@@ -16,4 +16,4 @@
 ## API Documentation
 | Module                                                             | Description           |
 | ------------------------------------------------------------------ | --------------------- |
-| [Contexts](Contexts.md)                          | A context is based on a hs.layout configuration of     |
+| [Contexts](Contexts.md)                          | A Context is based on a list of applications, each with optional filter for window names,     |

@@ -4,15 +4,38 @@
     "Constant": [],
     "Constructor": [
       {
+        "def": "Contexts.getByTitle()",
+        "desc": "Given the title of a previous created Context, return its instance.",
+        "doc": "Given the title of a previous created Context, return its instance.\n\nParameters:\n* title: Context title\n\nReturns:\n* Context instance, or nil if not found",
+        "name": "getByTitle",
+        "parameters": [
+          "* title: Context title"
+        ],
+        "returns": [
+          "* Context instance, or nil if not found"
+        ],
+        "signature": "Contexts.getByTitle()",
+        "stripped_doc": "",
+        "type": "Constructor"
+      },
+      {
         "def": "Contexts.new()",
         "desc": "Create a new Contexts instance",
-        "doc": "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
+        "doc": "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * apps (table) [Optional]: A list of tables, each containing:\n    * name (string): Application name\n    * windowNames (string) [Optional]: only allow windows whose title matches the\n      pattern(s) as per string.match\n    * apply (list) [Optional]: A list of actions to apply to the application's\n      windows when the Context is applied. These are also applied when a screen\n      change is detected. See module description for details on Actions.\n    * create (list) [Optional]: A list of actions to apply to a new window\n      created for the application (and matching `windowNames` if given).\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
         "name": "new",
         "parameters": [
           "* config: A table containing the following keys:",
           "  * title (string) [Required]: Title of context for display to user",
           "  * image (hs.image) [Optional]: chooser() will use this image",
-          "  * layout (table) [Optional]: A table suitable for use with hs.layout.apply",
+          "  * apps (table) [Optional]: A list of tables, each containing:",
+          "    * name (string): Application name",
+          "    * windowNames (string) [Optional]: only allow windows whose title matches the",
+          "      pattern(s) as per string.match",
+          "    * apply (list) [Optional]: A list of actions to apply to the application's",
+          "      windows when the Context is applied. These are also applied when a screen",
+          "      change is detected. See module description for details on Actions.",
+          "    * create (list) [Optional]: A list of actions to apply to a new window",
+          "      created for the application (and matching `windowNames` if given).",
           "  * enterFunction (function) [Optional]: A function called when context is applied",
           "  * exitFunction (function) [Optional]: A function called when context is exited",
           "  * focused (dictionary) [Optional]: Window to focus on. First element is application,",
@@ -126,10 +149,11 @@
       {
         "def": "Contexts:sealUserActions()",
         "desc": "Return a table suitable for Seal.plugins.useractions.actions",
-        "doc": "Return a table suitable for Seal.plugins.useractions.actions\nTable includes an action for each context, plus an action to\nreload the current context.\nSee http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html\n\nParameters:\n* None\n\nReturns:\n* Table of Seal user actions, nil on error",
+        "doc": "Return a table suitable for Seal.plugins.useractions.actions\nTable includes an action for each context, plus an action to\nreload the current context.\nSee http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html\n\nParameters:\n* actions (option): Table of Seal user actions. If provided, Context\n  actions will be added to this table and returned.\n\nReturns:\n* Table of Seal user actions, nil on error",
         "name": "sealUserActions",
         "parameters": [
-          "* None"
+          "* actions (option): Table of Seal user actions. If provided, Context",
+          "  actions will be added to this table and returned."
         ],
         "returns": [
           "* Table of Seal user actions, nil on error"
@@ -173,7 +197,7 @@
       {
         "def": "Contexts:apply()",
         "desc": "Apply given context:",
-        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present and not reapplying\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n\n7) Focuses the window given in config.focused if not reapplying.\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [optional]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
+        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\n2) If this Context inherits from another Context, calls apply() on that Context.\n\nFollowing is handled by _apply():\n\n3) Calls config.enterFunction() if present and not reapplying\n\n4) For each entry in `apps` that has an `apply` action list defined, apply\n   those actions to each relevant window. See module description for details.\n\n5) Focuses the window given in config.focused if not reapplying.\n\n6) Sets the default input device found in defaultInputDevice\n\n7) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [optional]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
         "name": "apply",
         "parameters": [
           "* reapply [optional]: True if we are re-applying a context."
@@ -182,7 +206,7 @@
           "* true on success, false on failure"
         ],
         "signature": "Contexts:apply()",
-        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\nFollowing is handled by _apply():\n2) Calls config.enterFunction() if present and not reapplying\n5) Applies config.layout with hs.layout.apply()\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n7) Focuses the window given in config.focused if not reapplying.\n8) Sets the default input device found in defaultInputDevice\n9) Sets the default output device found in defaultOutputDevice",
+        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\n2) If this Context inherits from another Context, calls apply() on that Context.\nFollowing is handled by _apply():\n3) Calls config.enterFunction() if present and not reapplying\n4) For each entry in `apps` that has an `apply` action list defined, apply\n   those actions to each relevant window. See module description for details.\n5) Focuses the window given in config.focused if not reapplying.\n6) Sets the default input device found in defaultInputDevice\n7) Sets the default output device found in defaultOutputDevice",
         "type": "Method"
       },
       {
@@ -202,13 +226,13 @@
       }
     ],
     "Variable": [],
-    "desc": "A context is based on a hs.layout configuration of",
-    "doc": "A context is based on a hs.layout configuration of\na set of applications and windows and their layout\nand adds the following:\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Creates a set of hs.window.filter subscriptions for windows in the\n  layout and applies the relevant portion of the layout for any relevant\n  new windows that are created.\n* Allows setting the default input and output audio device.\n* Re-applies the layout on screen layout changes.\n\nAdditionally, to allow for interactive selection of Contextsr:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.",
+    "desc": "A Context is based on a list of applications, each with optional filter for window names,",
+    "doc": "A Context is based on a list of applications, each with optional filter for window names,\nand a set of actions to be called with the Context is applied (or a screen change\nis detected), or a new window for the application is created. The same application\ncan appear multiple times with different filters for window names.\n\nActions can be any of the following:\n* A string starting with \"screen:\": the remainder of the string is the name of a screen,\n  which the window will be moved to if a screen matching the name is found.\n* A string matching one of the following, in which case the window will be resized\n  as descripbed:\n    * `\"maximize\"`: window will be maximized as `hs.window:maximize()`\n    * `\"left50\"`: window will fill the left 50% of the screen\n    * `\"right50\"`: window will fill the right 50% of the screen\n* Any other string will be passed to hs.geometry.new() and, if successfully in creating\n  a new `hs.geomtry` instance, the window will be resized to that instance.\n* An `hs.geomtry` instance: the window will be resized to that instance.\n* An `hs.screen` instance: the window will be moved to the screen\n* A function: the function will be called with a single parameter, the `hs.window`\n  instance of the window.\n\nAdditionally a Context allows for the following:\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Allows setting the default input and output audio device.\n\nAdditionally, to allow for interactive selection of Contexts:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.\n* A specific application/window to receive focus with the Context is applied.",
     "items": [
       {
         "def": "Contexts:apply()",
         "desc": "Apply given context:",
-        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\nFollowing is handled by _apply():\n\n2) Calls config.enterFunction() if present and not reapplying\n\n5) Applies config.layout with hs.layout.apply()\n\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n\n7) Focuses the window given in config.focused if not reapplying.\n\n8) Sets the default input device found in defaultInputDevice\n\n9) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [optional]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
+        "doc": "Apply given context:\n\n1) Calls unapply() on the previously applied context (unless we are reapplying)\n\n2) If this Context inherits from another Context, calls apply() on that Context.\n\nFollowing is handled by _apply():\n\n3) Calls config.enterFunction() if present and not reapplying\n\n4) For each entry in `apps` that has an `apply` action list defined, apply\n   those actions to each relevant window. See module description for details.\n\n5) Focuses the window given in config.focused if not reapplying.\n\n6) Sets the default input device found in defaultInputDevice\n\n7) Sets the default output device found in defaultOutputDevice\n\nParameters:\n* reapply [optional]: True if we are re-applying a context.\n\nReturns:\n* true on success, false on failure",
         "name": "apply",
         "parameters": [
           "* reapply [optional]: True if we are re-applying a context."
@@ -217,7 +241,7 @@
           "* true on success, false on failure"
         ],
         "signature": "Contexts:apply()",
-        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\nFollowing is handled by _apply():\n2) Calls config.enterFunction() if present and not reapplying\n5) Applies config.layout with hs.layout.apply()\n6) Creates a set of hs.window.filters subscriptions for each application/window\n   in the given layout and applies the relevant portion of the layout\n   when relevant new windows are created. Skipped if reapplying.\n7) Focuses the window given in config.focused if not reapplying.\n8) Sets the default input device found in defaultInputDevice\n9) Sets the default output device found in defaultOutputDevice",
+        "stripped_doc": "1) Calls unapply() on the previously applied context (unless we are reapplying)\n2) If this Context inherits from another Context, calls apply() on that Context.\nFollowing is handled by _apply():\n3) Calls config.enterFunction() if present and not reapplying\n4) For each entry in `apps` that has an `apply` action list defined, apply\n   those actions to each relevant window. See module description for details.\n5) Focuses the window given in config.focused if not reapplying.\n6) Sets the default input device found in defaultInputDevice\n7) Sets the default output device found in defaultOutputDevice",
         "type": "Method"
       },
       {
@@ -281,6 +305,21 @@
         "type": "Function"
       },
       {
+        "def": "Contexts.getByTitle()",
+        "desc": "Given the title of a previous created Context, return its instance.",
+        "doc": "Given the title of a previous created Context, return its instance.\n\nParameters:\n* title: Context title\n\nReturns:\n* Context instance, or nil if not found",
+        "name": "getByTitle",
+        "parameters": [
+          "* title: Context title"
+        ],
+        "returns": [
+          "* Context instance, or nil if not found"
+        ],
+        "signature": "Contexts.getByTitle()",
+        "stripped_doc": "",
+        "type": "Constructor"
+      },
+      {
         "def": "Contexts:init()",
         "desc": "Initializes a Contexts",
         "doc": "Initializes a Contexts\nWhen a user calls hs.loadSpoon(), Hammerspoon will load and execute init.lua\nfrom the relevant s.\nDo generally not perform any work, map any hotkeys, start any timers/watchers/etc.\nin the main scope of your init.lua. Instead, it should simply prepare an object\nwith methods to be used later, then return the object.\n\nParameters:\n * None\n\nReturns:\n * Contexts object",
@@ -298,13 +337,21 @@
       {
         "def": "Contexts.new()",
         "desc": "Create a new Contexts instance",
-        "doc": "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * layout (table) [Optional]: A table suitable for use with hs.layout.apply\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
+        "doc": "Create a new Contexts instance\n\nParameters:\n* config: A table containing the following keys:\n  * title (string) [Required]: Title of context for display to user\n  * image (hs.image) [Optional]: chooser() will use this image\n  * apps (table) [Optional]: A list of tables, each containing:\n    * name (string): Application name\n    * windowNames (string) [Optional]: only allow windows whose title matches the\n      pattern(s) as per string.match\n    * apply (list) [Optional]: A list of actions to apply to the application's\n      windows when the Context is applied. These are also applied when a screen\n      change is detected. See module description for details on Actions.\n    * create (list) [Optional]: A list of actions to apply to a new window\n      created for the application (and matching `windowNames` if given).\n  * enterFunction (function) [Optional]: A function called when context is applied\n  * exitFunction (function) [Optional]: A function called when context is exited\n  * focused (dictionary) [Optional]: Window to focus on. First element is application,\n    second optional element is window name.\n  * defaultInputDevice (table) [Optional]: List of strings identifying input audio\n    devices.  First input device found, will be set to the default.\n  * defaultOutputDevice (table) [Optional]: List of strings identifying output\n    audio devices. First output device found, will be set to the default.\n\nReturns:\n* Contexts instance",
         "name": "new",
         "parameters": [
           "* config: A table containing the following keys:",
           "  * title (string) [Required]: Title of context for display to user",
           "  * image (hs.image) [Optional]: chooser() will use this image",
-          "  * layout (table) [Optional]: A table suitable for use with hs.layout.apply",
+          "  * apps (table) [Optional]: A list of tables, each containing:",
+          "    * name (string): Application name",
+          "    * windowNames (string) [Optional]: only allow windows whose title matches the",
+          "      pattern(s) as per string.match",
+          "    * apply (list) [Optional]: A list of actions to apply to the application's",
+          "      windows when the Context is applied. These are also applied when a screen",
+          "      change is detected. See module description for details on Actions.",
+          "    * create (list) [Optional]: A list of actions to apply to a new window",
+          "      created for the application (and matching `windowNames` if given).",
           "  * enterFunction (function) [Optional]: A function called when context is applied",
           "  * exitFunction (function) [Optional]: A function called when context is exited",
           "  * focused (dictionary) [Optional]: Window to focus on. First element is application,",
@@ -339,10 +386,11 @@
       {
         "def": "Contexts:sealUserActions()",
         "desc": "Return a table suitable for Seal.plugins.useractions.actions",
-        "doc": "Return a table suitable for Seal.plugins.useractions.actions\nTable includes an action for each context, plus an action to\nreload the current context.\nSee http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html\n\nParameters:\n* None\n\nReturns:\n* Table of Seal user actions, nil on error",
+        "doc": "Return a table suitable for Seal.plugins.useractions.actions\nTable includes an action for each context, plus an action to\nreload the current context.\nSee http://www.hammerspoon.org/Spoons/Seal.plugins.useractions.html\n\nParameters:\n* actions (option): Table of Seal user actions. If provided, Context\n  actions will be added to this table and returned.\n\nReturns:\n* Table of Seal user actions, nil on error",
         "name": "sealUserActions",
         "parameters": [
-          "* None"
+          "* actions (option): Table of Seal user actions. If provided, Context",
+          "  actions will be added to this table and returned."
         ],
         "returns": [
           "* Table of Seal user actions, nil on error"
@@ -398,7 +446,7 @@
       }
     ],
     "name": "Contexts",
-    "stripped_doc": "a set of applications and windows and their layout\nand adds the following:\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Creates a set of hs.window.filter subscriptions for windows in the\n  layout and applies the relevant portion of the layout for any relevant\n  new windows that are created.\n* Allows setting the default input and output audio device.\n* Re-applies the layout on screen layout changes.\n\nAdditionally, to allow for interactive selection of Contextsr:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.",
+    "stripped_doc": "and a set of actions to be called with the Context is applied (or a screen change\nis detected), or a new window for the application is created. The same application\ncan appear multiple times with different filters for window names.\n\nActions can be any of the following:\n* A string starting with \"screen:\": the remainder of the string is the name of a screen,\n  which the window will be moved to if a screen matching the name is found.\n* A string matching one of the following, in which case the window will be resized\n  as descripbed:\n    * `\"maximize\"`: window will be maximized as `hs.window:maximize()`\n    * `\"left50\"`: window will fill the left 50% of the screen\n    * `\"right50\"`: window will fill the right 50% of the screen\n* Any other string will be passed to hs.geometry.new() and, if successfully in creating\n  a new `hs.geomtry` instance, the window will be resized to that instance.\n* An `hs.geomtry` instance: the window will be resized to that instance.\n* An `hs.screen` instance: the window will be moved to the screen\n* A function: the function will be called with a single parameter, the `hs.window`\n  instance of the window.\n\nAdditionally a Context allows for the following:\n* Allows for functions that are called when the layout is applied\n  and unapplied.\n* Allows setting the default input and output audio device.\n\nAdditionally, to allow for interactive selection of Contexts:\n* The chooser() method creates a hs.chooser() instance to choose created layouts\n* The sealUserActions() method creates user actions for the Seal spoon for each\n  created Context.\n* A specific application/window to receive focus with the Context is applied.",
     "submodules": [],
     "type": "Module"
   }

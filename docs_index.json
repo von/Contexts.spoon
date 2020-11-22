@@ -1,6 +1,6 @@
 [
   {
-    "desc": "A context is based on a hs.layout configuration of",
+    "desc": "A Context is based on a list of applications, each with optional filter for window names,",
     "name": "Contexts",
     "type": "Module"
   },
@@ -57,6 +57,12 @@
     "module": "Contexts",
     "name": "stop",
     "type": "Function"
+  },
+  {
+    "desc": "Given the title of a previous created Context, return its instance.",
+    "module": "Contexts",
+    "name": "getByTitle",
+    "type": "Constructor"
   },
   {
     "desc": "Create a new Contexts instance",

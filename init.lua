@@ -1,31 +1,55 @@
 --- === Contexts ===
---- Allow defining contexts and switching between them.
---- A context is based on a hs.layout configuration of
---- a set of applications and windows and their layout
---- and adds the following:
+--- Allow defining Contexts and switching between them.
+--- A Context is based on a list of applications, each with optional filter for window names,
+--- and a set of actions to be called with the Context is applied (or a screen change
+--- is detected), or a new window for the application is created. The same application
+--- can appear multiple times with different filters for window names.
+---
+--- Actions can be any of the following:
+--- * A string starting with "screen:": the remainder of the string is the name of a screen,
+---   which the window will be moved to if a screen matching the name is found.
+--- * A string matching one of the following, in which case the window will be resized
+---   as descripbed:
+---     * `"maximize"`: window will be maximized as `hs.window:maximize()`
+---     * `"left50"`: window will fill the left 50% of the screen
+---     * `"right50"`: window will fill the right 50% of the screen
+--- * Any other string will be passed to hs.geometry.new() and, if successfully in creating
+---   a new `hs.geomtry` instance, the window will be resized to that instance.
+--- * An `hs.geomtry` instance: the window will be resized to that instance.
+--- * An `hs.screen` instance: the window will be moved to the screen
+--- * A function: the function will be called with a single parameter, the `hs.window`
+---   instance of the window.
+---
+--- Additionally a Context allows for the following:
 --- * Allows for functions that are called when the layout is applied
 ---   and unapplied.
---- * Creates a set of hs.window.filter subscriptions for windows in the
----   layout and applies the relevant portion of the layout for any relevant
----   new windows that are created.
 --- * Allows setting the default input and output audio device.
---- * Re-applies the layout on screen layout changes.
 ---
---- Additionally, to allow for interactive selection of Contextsr:
+--- Additionally, to allow for interactive selection of Contexts:
 --- * The chooser() method creates a hs.chooser() instance to choose created layouts
 --- * The sealUserActions() method creates user actions for the Seal spoon for each
 ---   created Context.
+--- * A specific application/window to receive focus with the Context is applied.
 
 local Contexts = {}
 
 -- Metadata {{{ --
 Contexts.name="Contexts"
-Contexts.version="0.10"
+Contexts.version="0.20"
 Contexts.author="Von Welch"
 -- https://opensource.org/licenses/Apache-2.0
 Contexts.license="Apache-2.0"
 Contexts.homepage="https://github.com/von/Contexts.spoon"
 -- }}} Metadata --
+
+-- Constants {{{ --
+-- Table of gemetries used by _applyActions() for apply and friends
+local geometry = {
+  maximize = hs.geometry.new(0,0,1,1),
+  left50 = hs.geometry.new(0,0,.5,1),
+  right50 = hs.geometry.new(.5,0,.5,1)
+}
+-- }}} Constants --
 
 -- debug() {{{ --
 --- Contexts:debug(enable)
@@ -136,7 +160,8 @@ end
 -- screenWatcherCallback() {{{ --
 -- Contexts:screenWatcherCallback()
 -- Internal function
--- Callback for self.screenWatcher
+-- Callback for `self.screenWatcher`. Calls `apply()` for current Context and prevents
+-- rentrance in case that causes a screen change.
 --
 -- Parameters:
 -- * None
@@ -196,7 +221,15 @@ end
 --- * config: A table containing the following keys:
 ---   * title (string) [Required]: Title of context for display to user
 ---   * image (hs.image) [Optional]: chooser() will use this image
----   * layout (table) [Optional]: A table suitable for use with hs.layout.apply
+---   * apps (list) [Optional]: A list of tables, each containing:
+---     * name (string): Application name
+---     * windowNames (string) [Optional]: only allow windows whose title matches the
+---       pattern(s) as per string.match
+---     * apply (list) [Optional]: A list of actions to apply to the application's
+---       windows when the Context is applied. These are also applied when a screen
+---       change is detected. See module description for details on Actions.
+---     * create (list) [Optional]: A list of actions to apply to a new window
+---       created for the application (and matching `windowNames` if given).
 ---   * enterFunction (function) [Optional]: A function called when context is applied
 ---   * exitFunction (function) [Optional]: A function called when context is exited
 ---   * focused (dictionary) [Optional]: Window to focus on. First element is application,
@@ -216,8 +249,26 @@ function Contexts.new(config)
   Contexts.log.df("new context %s created", config.title)
   local self = setmetatable({}, Contexts)
   self.config = config
-  -- hs.window.filsters that will be created on first application
-  self.wfilters = nil
+
+  -- Create window filters for each entry in config.apps
+  if self.config.apps then
+    hs.fnutils.each(self.config.apps, function(a)
+      self.log.df("Creating window.filter for %s", a.name)
+      local filter = hs.window.filter.new(false)
+      local filterTable = {}
+      if a.windowNames then
+        self.log.df("Windownames: %s", a.windowNames)
+        filterTable.allowTitles = a.windowNames
+      end
+      filter:setAppFilter(a.name, filterTable)
+      if a.create then
+        filter:subscribe(hs.window.filter.windowCreated,
+          function(w) self:_applyActions(a.create, w) end)
+      end
+      a.wfilter = filter
+    end)
+  end
+
   -- TODO: Add a delete() method that removes from contexts
   table.insert(Contexts.contexts, self)
   return self
@@ -247,23 +298,22 @@ end
 --- Method
 --- Apply given context:
 ---
---- 1) Calls unapply() on the previously applied context (unless we are reapplying)
+--- 1) Calls `unapply()` on the previously applied context (unless we are reapplying)
 ---
---- Following is handled by _apply():
+--- 2) If this Context inherits from another Context, calls `apply()` on that Context.
 ---
---- 2) Calls config.enterFunction() if present and not reapplying
+--- Following is handled by `_apply()`:
 ---
---- 5) Applies config.layout with hs.layout.apply()
+--- 3) Calls config.enterFunction() if present and not reapplying
 ---
---- 6) Creates a set of hs.window.filters subscriptions for each application/window
----    in the given layout and applies the relevant portion of the layout
----    when relevant new windows are created. Skipped if reapplying.
+--- 4) For each entry in `apps` that has an `apply` action list defined, apply
+---    those actions to each relevant window. See module description for details.
 ---
---- 7) Focuses the window given in config.focused if not reapplying.
+--- 5) Focuses the window given in config.focused if not reapplying.
 ---
---- 8) Sets the default input device found in defaultInputDevice
+--- 6) Sets the default input device found in defaultInputDevice
 ---
---- 9) Sets the default output device found in defaultOutputDevice
+--- 7) Sets the default output device found in defaultOutputDevice
 ---
 --- Parameters:
 --- * reapply [optional]: True if we are re-applying a context.
@@ -329,64 +379,18 @@ function Contexts:_apply(reapply)
     end
   end
 
-  if not reapply and self.config.layout then
-    -- Make sure all the windows in the layout are unminimized
-    hs.fnutils.each(self.config.layout,
-      function(rule)
-        local appName = rule[1]
-        local app = hs.application.get(appName)
-        -- Use get() as it requires an exact match
-        if app then
-          local winName = rule[2]
-          local winFunc = function(w) self.log.df("Raising %s", w:title()) w:unminimize() w:raise() end
-          if type(winName) == "string" then
-            local win = app:findWindow(winName)
-            if win then
-              winFunc(win)
-            end
-          elseif type(winName) == "function" then
-            local win = winName()
-            if win then
-              winFunc(win)
-            end
-          else  -- nil
-            -- Unminimize all windows
-            hs.fnutils.each(app:allWindows(), winFunc)
-          end
-        end
-      end)
-  end
-
-  if self.config.layout then
-    if not self.wfilters then
-    -- First time called, create hs.window.filters
-      self.log.d("Creating window filters subscriptions.")
-      self.wfilters = {}
-      hs.fnutils.each(self.config.layout,
-        function(rule)
-          local appName = rule[1]
-          local winName = rule[2]
-          self.log.df("Creating window.filter for %s %s", appName, winName)
-          local filter = hs.window.filter.new(false)
-          local filterTable = {}
-          if winName and type(winName) == "string" then
-            filterTable.allowTitles = winName
-          end
-          filter:setAppFilter(appName, filterTable)
-          filter:subscribe(hs.window.filter.windowCreated,
-            function(win, appName, event)
-              self.log.df(appName .. " window created - applying layout")
-              hs.layout.apply({rule})
-            end)
-            table.insert(self.wfilters, filter)
-        end)
-    else
-      self.log.d("Resuming window filter subscriptions.")
-      hs.fnutils.each(self.wfilters, function(f) f:resume() end)
+  if self.config.apps then
+    hs.fnutils.each(self.config.apps, function(a)
+      if a.apply then
+        local windows = a.wfilter:getWindows()
+        self.log.df("%s: Calling %d apply elements for %d windows", a.name, #a.apply, #windows)
+        hs.fnutils.each(windows, function(w) self:_applyActions(a.apply, w) end)
+      end
+    end)
+    if not reapply then
+      self.log.df("Resuming window filters")
+      hs.fnutils.each(self.config.apps, function(a) a.wfilter:resume() end)
     end
-
-    self.log.d("Applying layout")
-    hs.layout.apply(self.config.layout)
   end
 
   if not reapply and self.config.focused then
@@ -429,6 +433,94 @@ function Contexts:_apply(reapply)
   return true
 end
 -- }}} _apply() --
+
+-- _applyActions() {{{ --
+-- Contexts:_applyActions()
+-- Internal Function
+-- Given a list of actions as described in apply(), apply them in turn to given
+-- window.
+--
+-- Parameters:
+-- * list: List of actions as described in apply()
+-- * window: hs.window instance
+--
+-- Returns:
+-- * Nothing
+function Contexts:_applyActions(list, window)
+  hs.fnutils.each(list, function(action)
+    local atype = type(action)
+    if atype == "string" then
+      if action:sub(1, 7) == "screen:" then
+        -- Preferred screen
+        local sname = action:sub(8)
+        local screens = hs.screen.allScreens()
+        local s = hs.fnutils.find(screens, function(s) return s:name() == preferredScreen end)
+        if s then
+          self:_applyScreen(window, s)
+        end
+      else
+        -- Geometry
+        local geometry = geometry[action] or hs.geometry.new(action)
+        if geometry then
+          self:_applyGeometry(geometry, window)
+        else
+          self.log.ef("Failed to parse action: %s", action)
+        end
+      end
+    elseif atype == "hs.geometry" then
+      self:_applyGeometry(action, action)
+    elseif atype == "hs.screen" then
+      self:_applyScreen(window, action)
+    elseif atype == "function" then
+      action(window)
+    elseif atype == "nil" then
+      self.log.e("Nil action")
+    else
+      self.log.ef("Unrecognized action: %s", hs.inspect(action))
+    end
+    end)
+end
+-- }}} _applyActions() --
+
+-- _applyGeometry() {{{ --
+-- Contexts:_applyGeometry()
+-- Internal Function
+-- Resize given window with given geometry. Handles different types of geometries.
+--
+-- Parameters:
+-- * geometry: hs.geometry instance
+-- * window: hs.window instance
+--
+-- Returns:
+-- * Nothing
+function Contexts:_applyGeometry(geometry, window)
+  local type = geometry:type()
+  if type == "point" or type == "rext" or type =="unitrect" then
+    window:move(geometry)
+  elseif type == "size" then
+    window:setSize(geometry)
+  else
+    self.log.ef("Unknown geometry type: %s", type)
+  end
+end
+-- }}} _applyGeometry() --
+
+-- applyScreen() {{{ --
+-- applyScreen()
+-- Internal Function
+-- Resize given window with given geometry. Handles different types of geometries.
+--
+-- Parameters:
+-- * geometry: hs.geometry instance
+-- * window: hs.window instance
+--
+-- Returns:
+-- * Nothing
+local function applyScreen(screen, window)
+  -- keep relative size, keep in bounds
+  window:moveToScreen(screen, false, true)
+end
+-- }}} applyScreen() --
 
 -- reapply() {{{ --
 --- Contexts:reapply()
@@ -487,9 +579,9 @@ end
 -- Returns:
 -- * true on success, false on error
 function Contexts:_unapply()
-  if self.wfilters then
+  if self.config.apps then
     self.log.d("Pausing window filter subscriptions")
-    hs.fnutils.each(self.wfilters, function(f) f:pause() end)
+    hs.fnutils.each(self.config.apps, function(a) a.wfilter:pause() end)
   end
 
   if self.config.exitFunction then
@@ -604,6 +696,9 @@ function Contexts:sealUserActions(actions)
     end)
   actions["Reapply Context"] = {
       fn = hs.fnutils.partial(Contexts.reapply, Contexts)
+    }
+  actions["Unapply Context"] = {
+      fn = function() Contexts.current:unapply() end
     }
   return actions
 end
