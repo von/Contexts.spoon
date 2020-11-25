@@ -11,6 +11,7 @@
 --- * A string matching one of the following, in which case the window will be resized
 ---   as descripbed:
 ---     * `"maximize"`: window will be maximized as `hs.window:maximize()`
+---     * `"minimize"`: window will be minimized as `hs.window:minimize()`
 ---     * `"left50"`: window will fill the left 50% of the screen
 ---     * `"right50"`: window will fill the right 50% of the screen
 --- * Any other string will be passed to hs.geometry.new() and, if successfully in creating
@@ -462,6 +463,8 @@ function Contexts:_applyActions(list, window)
         if s then
           self:_applyScreen(window, s)
         end
+      elseif action == "minimize" then
+        window:minimize()
       else
         -- Geometry
         local geometry = geometry[action] or hs.geometry.new(action)
