@@ -15,6 +15,8 @@
 ---     * `"right50"`: window will fill the right 50% of the screen
 --- * Any other string will be passed to hs.geometry.new() and, if successfully in creating
 ---   a new `hs.geomtry` instance, the window will be resized to that instance.
+---   One enhancement over standard geometry instances, is that negative `x` and `y` values
+---   will be treated as offsets from the right and bottom side of the screen respectively.
 --- * An `hs.geomtry` instance: the window will be resized to that instance.
 --- * An `hs.screen` instance: the window will be moved to the screen
 --- * A function: the function will be called with a single parameter, the `hs.window`
@@ -486,6 +488,8 @@ end
 -- Contexts:_applyGeometry()
 -- Internal Function
 -- Resize given window with given geometry. Handles different types of geometries.
+-- If a geometry instance has a negative `x` or `y` value, that value is treated
+-- as an offset from the right or bottom of the screen respectively.
 --
 -- Parameters:
 -- * geometry: hs.geometry instance
@@ -495,7 +499,17 @@ end
 -- * Nothing
 function Contexts:_applyGeometry(geometry, window)
   local type = geometry:type()
-  if type == "point" or type == "rect" or type =="unitrect" then
+  local screenFrame = window:screen():frame()
+  if type == "point" or type == "rect" then
+    -- Make negative x and y coordinates relative from lower right corner
+    if geometry.x < 0 then
+      geometry.x = screenFrame.w + geometry.x
+    end
+    if geometry.y < 0 then
+      geometry.y = screenFrame.h + geometry.y
+    end
+    window:move(geometry)
+  elseif type =="unitrect" then
     window:move(geometry)
   elseif type == "size" then
     window:setSize(geometry)
