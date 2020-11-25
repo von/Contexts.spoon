@@ -495,7 +495,7 @@ end
 -- * Nothing
 function Contexts:_applyGeometry(geometry, window)
   local type = geometry:type()
-  if type == "point" or type == "rext" or type =="unitrect" then
+  if type == "point" or type == "rect" or type =="unitrect" then
     window:move(geometry)
   elseif type == "size" then
     window:setSize(geometry)
