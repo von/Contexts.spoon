@@ -222,6 +222,8 @@ end
 --- Parameters:
 --- * config: A table containing the following keys:
 ---   * title (string) [Required]: Title of context for display to user
+---   * inherits (Contexts instance) [Optional]: Context instance that will be invokes
+---     before this instance. A chain of inheritances may be arbitrarily deep.
 ---   * image (hs.image) [Optional]: chooser() will use this image
 ---   * apps (list) [Optional]: A list of tables, each containing:
 ---     * name (string): Application name
