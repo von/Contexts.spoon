@@ -175,7 +175,7 @@ function Contexts:screenWatcherCallback()
   -- Prevent the handling of a screen change from spawning another
   -- handling of a screen change.
   if self.inScreenWatcherCallback then
-    self.log.w("Screen change detected while processing screen change. Ignoring.")
+    self.log.d("Screen change detected while processing screen change. Ignoring.")
   elseif self.current then
     self.log.d("Screen change detected. Re-applying context.")
     self.inScreenWatcherCallback = true
