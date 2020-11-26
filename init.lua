@@ -459,9 +459,9 @@ function Contexts:_applyActions(list, window)
         -- Preferred screen
         local sname = action:sub(8)
         local screens = hs.screen.allScreens()
-        local s = hs.fnutils.find(screens, function(s) return s:name() == preferredScreen end)
+        local s = hs.fnutils.find(screens, function(s) return s:name() == sname end)
         if s then
-          self:_applyScreen(window, s)
+          self:_applyScreen(s, window)
         end
       elseif action == "minimize" then
         window:minimize()
@@ -524,8 +524,8 @@ function Contexts:_applyGeometry(geometry, window)
 end
 -- }}} _applyGeometry() --
 
--- applyScreen() {{{ --
--- applyScreen()
+-- _applyScreen() {{{ --
+-- Contexts:_applyScreen()
 -- Internal Function
 -- Resize given window with given geometry. Handles different types of geometries.
 --
@@ -535,11 +535,11 @@ end
 --
 -- Returns:
 -- * Nothing
-local function applyScreen(screen, window)
+function Contexts:_applyScreen(screen, window)
   -- keep relative size, keep in bounds
   window:moveToScreen(screen, false, true)
 end
--- }}} applyScreen() --
+-- }}} _applyScreen() --
 
 -- reapply() {{{ --
 --- Contexts:reapply()
