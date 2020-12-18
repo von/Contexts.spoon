@@ -258,17 +258,23 @@ function Contexts.new(config)
   -- Create window filters for each entry in config.apps
   if self.config.apps then
     hs.fnutils.each(self.config.apps, function(a)
-      self.log.df("Creating window.filter for %s", a.name)
+      local logName = a.name
+      if a.windowNames then
+        logName = logName .. string.format(" (Windows: %s)", a.windowNames)
+      end
+      self.log.df("Creating window.filter for %s", logName)
       local filter = hs.window.filter.new(false)
       local filterTable = {}
       if a.windowNames then
-        self.log.df("Windownames: %s", a.windowNames)
         filterTable.allowTitles = a.windowNames
       end
       filter:setAppFilter(a.name, filterTable)
       if a.create then
         filter:subscribe(hs.window.filter.windowCreated,
-          function(w) self:_applyActions(a.create, w) end)
+          function(w)
+            self.log.df("Creation detected: %s", logName)
+            self:_applyActions(a.create, w)
+          end)
       end
       a.wfilter = filter
     end)
@@ -393,7 +399,7 @@ function Contexts:_apply(reapply)
       end
     end)
     if not reapply then
-      self.log.df("Resuming window filters")
+      self.log.df("Enabling window filter subscriptions")
       hs.fnutils.each(self.config.apps, function(a) a.wfilter:resume() end)
     end
   end
@@ -464,6 +470,7 @@ function Contexts:_applyActions(list, window)
           self:_applyScreen(s, window)
         end
       elseif action == "minimize" then
+        self.log.d("Minimzing window")
         window:minimize()
       else
         -- Geometry
@@ -479,6 +486,7 @@ function Contexts:_applyActions(list, window)
     elseif atype == "hs.screen" then
       self:_applyScreen(window, action)
     elseif atype == "function" then
+      self.log.d("Calling function")
       action(window)
     elseif atype == "nil" then
       self.log.e("Nil action")
@@ -505,6 +513,7 @@ end
 function Contexts:_applyGeometry(geometry, window)
   local type = geometry:type()
   local screenFrame = window:screen():frame()
+  self.log.df("Applying geometry of type %s", type)
   if type == "point" or type == "rect" then
     -- Make negative x and y coordinates relative from lower right corner
     if geometry.x < 0 then
