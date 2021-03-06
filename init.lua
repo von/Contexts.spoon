@@ -179,7 +179,14 @@ function Contexts:screenWatcherCallback()
   elseif self.current then
     self.log.d("Screen change detected. Re-applying context.")
     self.inScreenWatcherCallback = true
-    self.current:apply(true)  -- true == reapply
+    -- Wrap apply() so that if it fails, we unset inScreenWatcherCallback
+    local result, errormsg = xpcall(
+      -- true argument -> reapply
+      function() self:apply(true) end,
+        debug.traceback)
+    if not result then
+      self.log.ef("Error handling re-apply: %s", errormsg)
+    end
     self.inScreenWatcherCallback = false
   end
 end
