@@ -520,7 +520,8 @@ end
 function Contexts:_applyGeometry(geometry, window)
   local type = geometry:type()
   local screenFrame = window:screen():frame()
-  self.log.df("Applying geometry of type %s", type)
+  -- hs.geometry seems to do a good job of providing a string
+  self.log.df("Applying geometry: %s", geometry)
   if type == "point" or type == "rect" then
     -- Make negative x and y coordinates relative from lower right corner
     if geometry.x < 0 then
