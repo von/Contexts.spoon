@@ -493,7 +493,8 @@ function Contexts:_applyActions(list, window)
     elseif atype == "hs.screen" then
       self:_applyScreen(window, action)
     elseif atype == "function" then
-      self.log.d("Calling function")
+      -- Will print a unique address of function
+      self.log.df("Calling %s on window %s", action, window:title())
       action(window)
     elseif atype == "nil" then
       self.log.e("Nil action")
@@ -553,6 +554,7 @@ end
 -- Returns:
 -- * Nothing
 function Contexts:_applyScreen(screen, window)
+  self.log.df("Moving window \"%s\" to screen %s", window:title(), screen:name())
   -- keep relative size, keep in bounds
   window:moveToScreen(screen, false, true)
 end
