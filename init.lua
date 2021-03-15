@@ -182,7 +182,7 @@ function Contexts:screenWatcherCallback()
     -- Wrap apply() so that if it fails, we unset inScreenWatcherCallback
     local result, errormsg = xpcall(
       -- true argument -> reapply
-      function() self:apply(true) end,
+      function() self.current:apply(true) end,
         debug.traceback)
     if not result then
       self.log.ef("Error handling re-apply: %s", errormsg)
