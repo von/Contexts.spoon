@@ -471,6 +471,7 @@ function Contexts:_applyActions(list, window)
   hs.fnutils.each(list, function(action)
     local atype = type(action)
     if atype == "string" then
+      self.log.df("Action string: %s", action)
       if action:sub(1, 7) == "screen:" then
         -- Preferred screen
         local sname = action:sub(8)
