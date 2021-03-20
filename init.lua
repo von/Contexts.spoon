@@ -479,6 +479,8 @@ function Contexts:_applyActions(list, window)
         local s = hs.fnutils.find(screens, function(s) return s:name() == sname end)
         if s then
           self:_applyScreen(s, window)
+        else
+          self.log.wf("Screen \"%s\" not found", sname)
         end
       elseif action == "minimize" then
         self.log.d("Minimzing window")
