@@ -401,8 +401,11 @@ function Contexts:_apply(reapply)
     hs.fnutils.each(self.config.apps, function(a)
       if a.apply then
         local windows = a.wfilter:getWindows()
-        self.log.df("%s: Calling %d apply elements for %d windows", a.name, #a.apply, #windows)
-        hs.fnutils.each(windows, function(w) self:_applyActions(a.apply, w) end)
+        if #windows > 0 then
+          self.log.df("%s: Calling %d apply elements for %d windows",
+            a.name, #a.apply, #windows)
+          hs.fnutils.each(windows, function(w) self:_applyActions(a.apply, w) end)
+        end
       end
     end)
     if not reapply then
