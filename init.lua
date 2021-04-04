@@ -473,14 +473,18 @@ function Contexts:_applyActions(list, window)
     if atype == "string" then
       self.log.df("Action string: %s", action)
       if action:sub(1, 7) == "screen:" then
-        -- Preferred screen
-        local sname = action:sub(8)
+        -- Preferred screens, comma-separated in order
+        local screen = nil
         local screens = hs.screen.allScreens()
-        local s = hs.fnutils.find(screens, function(s) return s:name() == sname end)
-        if s then
-          self:_applyScreen(s, window)
-        else
-          self.log.wf("Screen \"%s\" not found", sname)
+        for sname in string.gmatch(action:sub(8), '([^,]+)') do
+          screen = hs.fnutils.find(screens, function(s) return s:name() == sname end)
+          if screen then
+            self:_applyScreen(screen, window)
+            break
+          end
+        end
+        if screen == nil then
+          self.log.df("No matching screen found: %s", action:sub(8))
         end
       elseif action == "minimize" then
         self.log.d("Minimzing window")
