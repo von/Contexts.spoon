@@ -551,10 +551,10 @@ end
 -- _applyScreen() {{{ --
 -- Contexts:_applyScreen()
 -- Internal Function
--- Resize given window with given geometry. Handles different types of geometries.
+-- Move given window to given screen.
 --
 -- Parameters:
--- * geometry: hs.geometry instance
+-- * geometry: hs.screen instance
 -- * window: hs.window instance
 --
 -- Returns:
