@@ -565,6 +565,8 @@ end
 -- * Nothing
 function Contexts:_applyScreen(screen, window)
   self.log.df("Moving window \"%s\" to screen %s", window:title(), screen:name())
+  -- DEBUG
+  self.log.df("DEBUG: window:frame():type == %s", screen:frame():type())
   -- keep relative size, keep in bounds
   window:moveToScreen(screen, false, true)
 end
