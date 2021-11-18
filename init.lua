@@ -18,7 +18,7 @@
 ---   a new `hs.geomtry` instance, the window will be resized to that instance.
 ---   One enhancement over standard geometry instances, is that negative `x` and `y` values
 ---   will be treated as offsets from the right and bottom side of the screen respectively.
---- * An `hs.geomtry` instance: the window will be resized to that instance.
+--- * An `hs.geometry` instance: the window will be resized to that instance.
 --- * An `hs.screen` instance: the window will be moved to the screen
 --- * A function: the function will be called with a single parameter, the `hs.window`
 ---   instance of the window.
