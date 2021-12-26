@@ -33,6 +33,10 @@
 --- * The sealUserActions() method creates user actions for the Seal spoon for each
 ---   created Context.
 --- * A specific application/window to receive focus with the Context is applied.
+---
+--- If a screen is added or removed, a Context will be re-applied. Note that a change
+--- in screen size doesn't trigger a reapplication (because OSX tends to move the Dock
+--- between screens fairly regularly.)
 
 local Contexts = {}
 
@@ -110,6 +114,10 @@ function Contexts:init()
   -- Guard to prevent re-entry into callback
   self.inScreenWatcherCallback = false
 
+  -- List of screens so we can detect changes. Set by apply() and then reset when
+  -- changed by screenwatcherCallback()
+  self.screens = nil
+  
   -- Path to this file itself
   -- See also http://www.hammerspoon.org/docs/hs.spoons.html#resourcePath
   self.path = hs.spoons.scriptPath()
@@ -177,7 +185,11 @@ function Contexts:screenWatcherCallback()
   if self.inScreenWatcherCallback then
     self.log.d("Screen change detected while processing screen change. Ignoring.")
   elseif self.current then
-    self.log.d("Screen change detected. Re-applying context.")
+    self.log.d("Screen watcher callback called.")
+    if not self:changeInScreens() then
+      self.log.d("No change in screens detected.")
+      return
+    end
     self.inScreenWatcherCallback = true
     -- Wrap apply() so that if it fails, we unset inScreenWatcherCallback
     local result, errormsg = xpcall(
@@ -191,6 +203,42 @@ function Contexts:screenWatcherCallback()
   end
 end
 -- }}} screenWatcherCallback() --
+
+-- changeInScreens() {{{ --
+--- Contexts:changeInScreens()
+--- Method
+--- Class method to determine if there has been a addition or removal of a screen
+--- since the last time `apply()` was called.
+---
+--- Parameters:
+--- * None
+---
+--- Returns:
+--- * Boolean: True if screens have been added or removed since last time `apply()` was called.
+---
+function Contexts:changeInScreens()
+  -- I don't think this should ever happen, but guard for it anyways.
+  if self.screens == nil then
+    self.log.d("self.screens == nil")
+    return true
+  end
+  local screens = hs.screen.allScreens()
+  self.log.d(hs.inspect(self.screens)) -- DEBUG
+  self.log.d(hs.inspect(screens)) -- DEBUG
+  if #screens ~= #self.screens then
+    self.log.df("Number of screens has changed from %d to %d", #self.screens, #screens)
+    return true
+  end
+  -- Same length, just make sure every current screens appears in our saved list
+  if hs.fnutils.every(screens,
+      function(s) return hs.fnutils.contains(self.screens, s) end) then
+    self.log.d("Screens have not changed.")
+    return false
+  end
+  self.log.d("Screen list does not match.")
+  return true
+end
+-- }}} changeInScreens() --
 
 -- bindHotKeys() {{{ --
 --- Contexts:bindHotKeys(table)
@@ -358,6 +406,9 @@ function Contexts:apply(reapply)
     end
     Contexts.current = self
   end
+
+  -- Save list of current screens so screenWatcherCallback() can detect changes.
+  Contexts.screens = hs.screen.allScreens()
 
   return self:_apply(reapply)
 end
