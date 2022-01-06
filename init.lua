@@ -169,16 +169,18 @@ end
 -- }}} stop() --
 
 -- screenWatcherCallback() {{{ --
--- Contexts:screenWatcherCallback()
--- Internal function
--- Callback for `self.screenWatcher`. Calls `apply()` for current Context and prevents
--- rentrance in case that causes a screen change.
---
--- Parameters:
--- * None
---
--- Returns:
--- * Nothing
+--- Contexts:screenWatcherCallback()
+--- Method
+--- Callback (class method) for `self.screenWatcher`.
+--- Determines if a screen has been added or removed and, if so, calls `apply()`
+--- for the current Context. Prevents rentrance in case `apply()` causes
+--- a screen change.
+---
+--- Parameters:
+--- * None
+---
+--- Returns:
+--- * Nothing
 function Contexts:screenWatcherCallback()
   -- Prevent the handling of a screen change from spawning another
   -- handling of a screen change.
