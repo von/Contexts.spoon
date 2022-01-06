@@ -417,17 +417,17 @@ end
 -- }}} apply() --
 
 -- _apply() {{{ --
--- Context:_apply()
--- Internal Function
--- Handle the work of applying given Context. See apply() for details.
--- Can be called recursively to handle inherited Contexts. One-time
--- activities should be handled by apply()
---
--- Parameters:
--- * reapply [optional]: If true, we are reapplying a context.
---
--- Returns:
--- * true on success, false on failure
+--- Context:_apply()
+--- Internal Function
+--- Handle the work of applying given Context. See apply() for details.
+--- Can be called recursively to handle inherited Contexts. One-time
+--- activities should be handled by apply()
+---
+--- Parameters:
+--- * reapply [optional]: If true, we are reapplying a context.
+---
+--- Returns:
+--- * true on success, false on failure
 function Contexts:_apply(reapply)
 
   if self.config.inherits then
@@ -509,17 +509,17 @@ end
 -- }}} _apply() --
 
 -- _applyActions() {{{ --
--- Contexts:_applyActions()
--- Internal Function
--- Given a list of actions as described in apply(), apply them in turn to given
--- window.
---
--- Parameters:
--- * list: List of actions as described in apply()
--- * window: hs.window instance
---
--- Returns:
--- * Nothing
+--- Contexts:_applyActions()
+--- Internal Function
+--- Given a list of actions as described in apply(), apply them in turn to given
+--- window.
+---
+--- Parameters:
+--- * list: List of actions as described in apply()
+--- * window: hs.window instance
+---
+--- Returns:
+--- * Nothing
 function Contexts:_applyActions(list, window)
   hs.fnutils.each(list, function(action)
     local atype = type(action)
@@ -569,18 +569,18 @@ end
 -- }}} _applyActions() --
 
 -- _applyGeometry() {{{ --
--- Contexts:_applyGeometry()
--- Internal Function
--- Resize given window with given geometry. Handles different types of geometries.
--- If a geometry instance has a negative `x` or `y` value, that value is treated
--- as an offset from the right or bottom of the screen respectively.
---
--- Parameters:
--- * geometry: hs.geometry instance
--- * window: hs.window instance
---
--- Returns:
--- * Nothing
+--- Contexts:_applyGeometry()
+--- Internal Function
+--- Resize given window with given geometry. Handles different types of geometries.
+--- If a geometry instance has a negative `x` or `y` value, that value is treated
+--- as an offset from the right or bottom of the screen respectively.
+---
+--- Parameters:
+--- * geometry: hs.geometry instance
+--- * window: hs.window instance
+---
+--- Returns:
+--- * Nothing
 function Contexts:_applyGeometry(geometry, window)
   local type = geometry:type()
   local screenFrame = window:screen():frame()
@@ -606,16 +606,16 @@ end
 -- }}} _applyGeometry() --
 
 -- _applyScreen() {{{ --
--- Contexts:_applyScreen()
--- Internal Function
--- Move given window to given screen.
---
--- Parameters:
--- * geometry: hs.screen instance
--- * window: hs.window instance
---
--- Returns:
--- * Nothing
+--- Contexts:_applyScreen()
+--- Method
+--- Move given window to given screen.
+---
+--- Parameters:
+--- * geometry: hs.screen instance
+--- * window: hs.window instance
+---
+--- Returns:
+--- * Nothing
 function Contexts:_applyScreen(screen, window)
   self.log.df("Moving window \"%s\" to screen %s", window:title(), screen:name())
   -- DEBUG
@@ -627,7 +627,7 @@ end
 
 -- reapply() {{{ --
 --- Contexts:reapply()
---- Function
+--- Method
 --- Reapply the current Context. This is equivalent to calling apply(true) fur
 --- the current context.
 ---
@@ -671,16 +671,16 @@ end
 -- }}} unapply() --
 
 -- _unapply() {{{ --
--- Contexts:_unapply()
--- Internal Function
--- Handle the work of unapplying the given context. Can be called recursively
--- to handle inheritance.
---
--- Parameters:
--- * None
---
--- Returns:
--- * true on success, false on error
+--- Contexts:_unapply()
+--- Method
+--- Handle the work of unapplying the given context. Can be called recursively
+--- to handle inheritance.
+---
+--- Parameters:
+--- * None
+---
+--- Returns:
+--- * true on success, false on error
 function Contexts:_unapply()
   if self.config.apps then
     self.log.d("Pausing window filter subscriptions")
