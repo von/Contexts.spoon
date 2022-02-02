@@ -321,7 +321,8 @@ function Contexts.new(config)
       end
       self.log.df("Creating window.filter for %s", logName)
       local filter = hs.window.filter.new(false)
-      local filterTable = {}
+      -- Allow any subrole of window
+      local filterTable = { allowRoles = "*" }
       if a.windowNames then
         filterTable.allowTitles = a.windowNames
       end
