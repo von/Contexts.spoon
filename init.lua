@@ -14,6 +14,7 @@
 ---     * `"minimize"`: window will be minimized as `hs.window:minimize()`
 ---     * `"left50"`: window will fill the left 50% of the screen
 ---     * `"right50"`: window will fill the right 50% of the screen
+---     * `"inBounds"`: window will be moved to within the bounds of the screen
 --- * Any other string will be passed to hs.geometry.new() and, if successfully in creating
 ---   a new `hs.geomtry` instance, the window will be resized to that instance.
 ---   One enhancement over standard geometry instances, is that negative `x` and `y` values
@@ -541,6 +542,9 @@ function Contexts:_applyActions(list, window)
         if screen == nil then
           self.log.df("No matching screen found: %s", action:sub(8))
         end
+      elseif action == "inBounds" then
+        self.log.d("Moving window in bounds")
+        window:setFrameInScreenBounds()
       elseif action == "minimize" then
         self.log.d("Minimzing window")
         window:minimize()
