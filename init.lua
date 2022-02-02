@@ -328,6 +328,7 @@ function Contexts.new(config)
       end
       filter:setAppFilter(a.name, filterTable)
       if a.create then
+        self.log.df("Subscribing to filter for %s: %s", logName, hs.inspect(filterTable))
         filter:subscribe(hs.window.filter.windowCreated,
           function(w)
             self.log.df("Creation detected: %s", logName)
