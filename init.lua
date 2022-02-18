@@ -226,8 +226,6 @@ function Contexts:changeInScreens()
     return true
   end
   local screens = hs.screen.allScreens()
-  self.log.d(hs.inspect(self.screens)) -- DEBUG
-  self.log.d(hs.inspect(screens)) -- DEBUG
   if #screens ~= #self.screens then
     self.log.df("Number of screens has changed from %d to %d", #self.screens, #screens)
     return true
