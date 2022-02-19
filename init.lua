@@ -118,7 +118,11 @@ function Contexts:init()
   -- List of screens so we can detect changes. Set by apply() and then reset when
   -- changed by screenwatcherCallback()
   self.screens = nil
-  
+
+  -- Mappings from screen configurations to contexts used by applyMapping()
+  -- and as set by setContextMappings()
+  self.contextMappings = {}
+
   -- Path to this file itself
   -- See also http://www.hammerspoon.org/docs/hs.spoons.html#resourcePath
   self.path = hs.spoons.scriptPath()
@@ -173,9 +177,8 @@ end
 --- Contexts:screenWatcherCallback()
 --- Method
 --- Callback (class method) for `self.screenWatcher`.
---- Determines if a screen has been added or removed and, if so, calls `apply()`
---- for the current Context. Prevents rentrance in case `apply()` causes
---- a screen change.
+--- Determines if a screen has been added or removed and, if so, calls
+--- applyMapping() to apply context based on new screen layout.
 ---
 --- Parameters:
 --- * None
@@ -194,14 +197,7 @@ function Contexts:screenWatcherCallback()
       return
     end
     self.inScreenWatcherCallback = true
-    -- Wrap apply() so that if it fails, we unset inScreenWatcherCallback
-    local result, errormsg = xpcall(
-      -- true argument -> reapply
-      function() self.current:apply(true) end,
-        debug.traceback)
-    if not result then
-      self.log.ef("Error handling re-apply: %s", errormsg)
-    end
+    self:applyMapping()
     self.inScreenWatcherCallback = false
   end
 end
@@ -810,6 +806,79 @@ function Contexts:sealUserActions(actions)
   return actions
 end
 -- }}} sealUserActions() --
+
+-- setContextMappings() {{{ --
+--- Contexts:setContextMappings()
+--- Function
+--- Set context mappings as used by applyMapping()
+--- Mappings should be an array, each with two elements:
+--- * An array of screen names
+--- * A Context instance
+---
+--- Parameters:
+--- * mappings
+---
+--- Returns:
+--- * Nothing
+function Contexts:setContextMappings(mappings)
+  if mappings then
+    self.log.d("Setting contextMappings")
+    self.contextMappings = mappings
+  else
+    self.log.e("setContextMappings() called with nil mappings")
+  end
+end
+-- }}} setContextMappings() --
+
+-- applyMapping() {{{ --
+--- Contexts:applyMapping()
+--- Function
+--- Apply context from contextMappings based on current screen configuration.
+---
+--- Parameters:
+--- * None
+---
+--- Returns:
+--- * Nothing
+function Contexts:applyMapping()
+  self.log.d("applyMapping() called")
+  if not self.contextMappings then
+    self.log.d("No contextMappings set")
+    return
+  end
+  local screens = hs.screen.allScreens()
+  local snames = hs.fnutils.map(screens,
+    function(s) return s:name() end)
+  self.log.df("Screens: %s", hs.inspect(snames))
+  local match = nil
+  -- Search for match to list of screens in contextMappings
+  for i,map in ipairs(self.contextMappings) do
+    if #screens == #map[1] then
+      if hs.fnutils.every(snames,
+        function(n) return hs.fnutils.contains(map[1], n) end) then
+        -- Match
+        match = map[2]
+        break
+      end
+    end
+  end
+  if match then
+    -- TODO: Check if match == current context?
+    self.log.f("Applying context %s", match.config.title)
+    -- Wrap apply() so that if it fails, we unset inScreenWatcherCallback if called
+    -- from screenWatcherCallback()
+    local result, errormsg = xpcall(
+      -- false argument -> not a reapply
+      function() match:apply(false) end,
+        debug.traceback)
+    if not result then
+      self.log.ef("Error applying context %s: %s", match.config.title, errormsg)
+    end
+  else
+    self.log.d("No match screen configuration found.")
+  end
+end
+-- }}} applyMapping() --
 
 return Contexts
 -- vim:foldmethod=marker:
