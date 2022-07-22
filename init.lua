@@ -883,4 +883,4 @@ end
 -- }}} applyMapping() --
 
 return Contexts
--- vim:foldmethod=marker:
+-- vim: fdm=marker
