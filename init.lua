@@ -35,6 +35,8 @@
 ---   created Context.
 --- * A specific application/window to receive focus with the Context is applied.
 ---
+--- For details see `Context.new()`
+---
 --- If a screen is added or removed, a Context will be re-applied. Note that a change
 --- in screen size doesn't trigger a reapplication (because OSX tends to move the Dock
 --- between screens fairly regularly.)
