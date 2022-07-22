@@ -414,7 +414,7 @@ end
 -- }}} apply() --
 
 -- _apply() {{{ --
---- Context:_apply()
+--- Contexts:_apply()
 --- Internal Function
 --- Handle the work of applying given Context. See apply() for details.
 --- Can be called recursively to handle inherited Contexts. One-time
