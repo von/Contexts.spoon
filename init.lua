@@ -416,17 +416,17 @@ end
 -- }}} apply() --
 
 -- _apply() {{{ --
---- Contexts:_apply()
---- Internal Function
---- Handle the work of applying given Context. See apply() for details.
---- Can be called recursively to handle inherited Contexts. One-time
---- activities should be handled by apply()
----
---- Parameters:
---- * reapply [optional]: If true, we are reapplying a context.
----
---- Returns:
---- * true on success, false on failure
+-- Contexts:_apply()
+-- Internal Function
+-- Handle the work of applying given Context. See apply() for details.
+-- Can be called recursively to handle inherited Contexts. One-time
+-- activities should be handled by apply()
+--
+-- Parameters:
+-- * reapply [optional]: If true, we are reapplying a context.
+--
+-- Returns:
+-- * true on success, false on failure
 function Contexts:_apply(reapply)
 
   if self.config.inherits then
@@ -508,17 +508,17 @@ end
 -- }}} _apply() --
 
 -- _applyActions() {{{ --
---- Contexts:_applyActions()
---- Internal Function
---- Given a list of actions as described in apply(), apply them in turn to given
---- window.
----
---- Parameters:
---- * list: List of actions as described in apply()
---- * window: hs.window instance
----
---- Returns:
---- * Nothing
+-- Contexts:_applyActions()
+-- Internal Function
+-- Given a list of actions as described in apply(), apply them in turn to given
+-- window.
+--
+-- Parameters:
+-- * list: List of actions as described in apply()
+-- * window: hs.window instance
+--
+-- Returns:
+-- * Nothing
 function Contexts:_applyActions(list, window)
   hs.fnutils.each(list, function(action)
     local atype = type(action)
@@ -571,18 +571,19 @@ end
 -- }}} _applyActions() --
 
 -- _applyGeometry() {{{ --
---- Contexts:_applyGeometry()
---- Internal Function
---- Resize given window with given geometry. Handles different types of geometries.
---- If a geometry instance has a negative `x` or `y` value, that value is treated
---- as an offset from the right or bottom of the screen respectively.
----
---- Parameters:
---- * geometry: hs.geometry instance
---- * window: hs.window instance
----
---- Returns:
---- * Nothing
+-- Contexts:_applyGeometry()
+-- Internal Function
+-- Resize given window with given geometry. Handles different types of
+-- geometries.
+-- If a geometry instance has a negative `x` or `y` value, that value is treated
+-- as an offset from the right or bottom of the screen respectively.
+--
+-- Parameters:
+-- * geometry: hs.geometry instance
+-- * window: hs.window instance
+--
+-- Returns:
+-- * Nothing
 function Contexts:_applyGeometry(geometry, window)
   local type = geometry:type()
   local screenFrame = window:screen():frame()
